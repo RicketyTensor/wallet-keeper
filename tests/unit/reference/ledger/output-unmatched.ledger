@@ -1,0 +1,16 @@
+2021-10-01 ENTGELTABSCHLUSS
+    ; Item: XYZ
+    ; Shop: XYZ
+    ; Creditor: None
+    ; Message: Entgeltabrechnung siehe anlage
+    Assets:XYZ                                        
+    Expenses:XYZ                                             3.5 EUR
+
+2021-09-30=2021-10-01 ABSCHLUSS
+    ; Item: XYZ
+    ; Shop: XYZ
+    ; Creditor: None
+    ; Message: Abrechnung 30.09.2021 siehe anlage
+    Assets:XYZ                                        
+    Expenses:XYZ                                             0.0 EUR
+

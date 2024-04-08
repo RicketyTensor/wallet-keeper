@@ -1,0 +1,133 @@
+/* Restyle range slider */
+.rc-slider-track {
+  background-color: #375a7f;
+}
+.rc-slider-dot-active {
+  border-color: #375a7f;
+  border: solid 2px #375a7f;
+}
+
+.rc-slider-handle {
+  background-color: #375a7f;
+  border-color: #375a7f;
+}
+
+.rc-slider-handle:hover {
+  border-color: #375a7f;
+}
+
+.rc-slider-handle-active:active {
+  border-color: #375a7f;
+}
+
+.rc-slider-mark-text {
+  position: absolute;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  color: #999;
+}
+
+.rc-slider-mark-text-active {
+  color: #ffffff;
+}
+
+/* Restyle AG grid */
+
+.ag-cell {
+  white-space: break-spaces;
+}
+
+.ag-header-cell {
+    background: #303030;
+    color: white
+}
+
+/* Restyle dropdown inputs */
+
+.Select-control {
+    background-color: rgb(25, 25, 25) !important;
+    color: white;
+  }
+
+.Select-menu-outer {
+    background-color: rgb(25, 25, 25);
+    color: white;
+}
+
+.Select-value-label {
+    background-color: rgb(40, 40, 40) !important;
+    color: white !important;
+    border-color: white;
+}
+
+.Select-value-icon {
+    background-color: rgb(40, 40, 40) !important;
+    color: white !important;
+    border-color: white;
+}
+
+
+/* Table */
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    font-family: monospace;
+    --text-color: rgb(255, 150, 255);
+    --hover: rgb(253, 253, 253);
+    --background-color-ellipses: rgb(253, 253, 253);
+    --faded-text: rgb(250, 250, 250);
+    --faded-text-header: rgb(180, 180, 180);
+    --selected-background: rgba(255, 65, 54, 0.2);
+    --faded-dropdown: rgb(240, 240, 240);
+    --muted: rgb(200, 200, 200);
+
+}
+
+.cell-table {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.dash-select-header {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.dash-delete-header {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.dash-header {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.dash-filter {
+    background-color: rgb(40, 40, 40) !important;
+    font-color: rgb(200, 200, 200) !important;
+}
+
+.dash-cell {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.focused {
+    background-color: rgb(60, 40, 60) !important;
+}
+
+.dash-cell-value {
+    color: rgb(200, 200, 200);
+}
+
+.cell-value-shadow {
+    color: rgb(200, 200, 200);
+    opacity: 1;
+}
+
+.dash-select-cell {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+.dash-delete-cell {
+    background-color: rgb(40, 40, 40) !important;
+}
+
+
