@@ -6,7 +6,7 @@ import datetime
 import calendar
 from dateutil.relativedelta import relativedelta
 import pandas
-from pages.dataframes import df_transactions, accounts
+from pages.preprocessing import df_transactions, accounts
 
 dash.register_page(__name__, order=4)
 

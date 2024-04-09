@@ -69,6 +69,20 @@ def extract_tags(row, all_tags):
     return columns
 
 
+def explode_accounts(df: pandas.DataFrame):
+    df_new = df.copy()
+
+    # function to explode accounts
+    def account_depth(row):
+        return int(row.account.count(":"))
+
+    # extend dataframe with account hierarchy
+    df_new["depth"] = df.apply(account_depth, axis=1)
+    df_new["parent"] = df_new.account.apply(lambda x: ":".join(x.split(":")[:-1]))
+    df_new["name"] = df_new.account.apply(lambda x: x.split(":")[-1])  # make column with names to display
+
+    return df_new
+
 # Prepare dataframe of transactions
 # =================================
 file_history = "history.csv"
@@ -78,8 +92,8 @@ df = pandas.read_csv(file_history, index_col=0,
 original_accounts = sorted(df["account"].unique())
 
 # Switch numbers on income to be positive
-mask = df["account"].str.startswith("Income")
-df.loc[mask, "amount"] = -1 * df.loc[mask, "amount"]
+# mask = df["account"].str.startswith("Income")
+# df.loc[mask, "amount"] = -1 * df.loc[mask, "amount"]
 
 groups = get_hierarchy(original_accounts)
 df = sum_up_groups(groups, df).reset_index()
