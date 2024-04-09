@@ -3,7 +3,7 @@ from dash import Dash, dcc, html, Input, Output, no_update, callback, clientside
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 
-load_figure_template("darkly")
+load_figure_template("flatly")
 
 app = Dash(__name__, use_pages=True)
 

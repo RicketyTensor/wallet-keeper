@@ -40,10 +40,17 @@ def make_account_selector():
         page_action="none",
         # page_current=0,
         # page_size=40,
-        style_cell={'textAlign': 'left'},
         style_as_list_view=True,
         fixed_rows={'headers': True},
-        style_table={'height': "1200px", "overflowY": "auto"},
+        style_table={'minHeight': "800px", 'height': "800px", 'maxHeight': "800px",
+                     "overflowY": "auto"},
+        style_cell={
+            'minWidth': '98px', 'width': '98px', 'maxWidth': '120px',
+            'height': '30px', 'minHeight': '30px', 'maxHeight': '100px',
+            'overflow': 'hidden',
+            'textOverflow': 'ellipsis',
+            'textAlign': 'left'
+        },
     )
     return html.Div([html.H5("Select accounts:"), table])
 
@@ -55,7 +62,8 @@ def make_tag_filter():
             dbc.Col([dcc.Dropdown(
                 id="filter_tag_name",
                 placeholder="Tag to filter",
-                options=df_tags.columns
+                options=df_tags.columns,
+                className="dbc"
             )]),
             dbc.Col([dcc.Input(
                 id="filter_tag_value",
@@ -89,18 +97,6 @@ graph_bar_y = html.Div([dcc.Graph(id="bar_yearly_graph",
 
 plots = [html.H4("Plots"),
          graph_history, html.Div(id="history_click_data", children=[]), graph_bar_m, graph_bar_y]
-
-layout = dbc.Container(children=[
-    dcc.Store(id="filtered_transactions"),
-    dcc.Store(id="filtered_tags"),
-    dbc.Row(children=[
-        # Account selector
-        dbc.Col(children=[make_account_selector(),
-                          make_tag_filter()], width={"size": 3}),
-        # Accounting
-        dbc.Col(children=plots)
-    ])
-], fluid=True)
 
 
 @callback(
@@ -238,7 +234,7 @@ def make_graph_history(cs, filtered_transactions):
 
     t0 = df_transactions.date.min()
     t1 = df_transactions.date.max()
-    fig.update_layout(title="Transaction history")
+    fig.update_layout(title="Daily transactions")
     fig.update_xaxes(range=[t0 - datetime.timedelta(days=30),
                             t1 + datetime.timedelta(days=30)])
     fig.update_xaxes(title_text="Year")
@@ -281,7 +277,7 @@ def make_graph_monthly(filtered_transactions):
     t1 = df_transactions.date.max()
     fig.update_xaxes(range=[t0 - datetime.timedelta(days=30),
                             t1 + datetime.timedelta(days=30)])
-    fig.update_layout(title="Monthly totals")
+    fig.update_layout(title="Monthly delta")
     fig.update_xaxes(title_text="Month", row=1, col=1)
     fig.update_yaxes(title_text="Total", row=1, col=1)
     return fig
@@ -322,3 +318,16 @@ def make_graph_yearly(filtered_transactions):
     fig.update_xaxes(title_text="Year", row=1, col=1)
     fig.update_yaxes(title_text="Total", row=1, col=1)
     return fig
+
+
+layout = dbc.Container(children=[
+    dcc.Store(id="filtered_transactions"),
+    dcc.Store(id="filtered_tags"),
+    dbc.Row(children=[
+        # Account selector
+        dbc.Col(children=[make_account_selector(),
+                          make_tag_filter()], width={"size": 2}),
+        # Accounting
+        dbc.Col(children=plots)
+    ])
+], fluid=True)

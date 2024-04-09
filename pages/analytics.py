@@ -37,7 +37,8 @@ def make_account_selector(identifier):
         style_cell={'textAlign': 'left'},
         style_as_list_view=True,
         fixed_rows={'headers': True},
-        style_table={'height': "1200px", "overflowY": "auto"},
+        style_table={'minHeight': "700px", 'height': "700px", 'maxHeight': "700px",
+                     "overflowY": "auto"},
     )
     return table
 
