@@ -1,7 +1,7 @@
 import unittest
 import os
 from pathlib import Path
-from core.generator.parser_factory import factory
+from modules.translator.factory_reader import factory
 import pickle
 import json
 import pandas
@@ -17,7 +17,7 @@ class TestParser(unittest.TestCase):
         p = Path(os.path.dirname(__file__))
 
         for file in p.glob("../input/{}/*.xml".format(form)):
-            data = parser.parse(file)
+            data = parser.read(file)
             ref_file = (os.path.splitext(os.path.basename(file))[0] + ".json")
             if self.update:
                 with open(p / "reference" / form / ref_file, 'w') as f:

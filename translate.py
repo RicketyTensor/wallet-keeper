@@ -1,35 +1,36 @@
 import argparse
-from core.generator.parsers.sparkasse_camt52v8 import ParserSparkasseCAMT52v8
 from pathlib import Path
 from typing import List, Dict
 import os
-from core.generator.parser_factory import factory as pf
-from core.generator.writer_factory import factory as wf
-from core.utils.collection import *
+from modules.translator.translations import allowed_translations
+from modules.translator.factory_reader import factory as fr
+from modules.translator.factory_writer import factory as fw
+from modules.utils.collection import *
 import json
 import glob
 import pandas
 
 
-def translate(files: List[Path], file_format: str, rules: dict, output: Path = None) -> None:
+def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None) -> None:
     """
     Translate to ledger format
 
     :param files: files to parse and use for database generation
-    :param file_format: parser to use for reading the files
+    :param reader_format: parser to use for reading the files
+    :param writer_format: parser to use for writing the files
     :param rules: dictionary with rules for a deterministic tagging
     :param output: path to an output file
     :return: path to a written database
     """
-    parser = pf.create(file_format)
-    data = []
+    reader = fr.create(reader_format)
+    transactions = []
     for file in files:
         # 1. Parse
-        data.extend(parser.parse(Path(file)))
+        transactions.extend(reader.read(Path(file)))
 
     # 2. Write
-    writer = wf.create("Ledger")
-    matched = writer.write(data, rules, output)
+    writer = fw.create(writer_format)
+    matched = writer.write(transactions, rules, output)
 
     pass
 
@@ -37,20 +38,26 @@ def translate(files: List[Path], file_format: str, rules: dict, output: Path = N
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='prepare',
-        description='Preprocess')
+        description='Translate between various formats')
     parser.add_argument("pattern", help="Glob pattern to recognize files")
-    parser.add_argument("-r", "--rules", dest="rules", required=False,
+    parser.add_argument("-g", "--guide", dest="guide", required=False,
                         help="Path to a JSON files with account rules")
-    parser.add_argument("-f", "--format", dest="format",
-                        choices=[ParserSparkasseCAMT52v8.format],
-                        default=ParserSparkasseCAMT52v8.format, help="Format of the input files")
+    parser.add_argument("-r", "--reader", dest="reader",
+                        choices=allowed_translations.keys(),
+                        default=list(allowed_translations.keys())[0].format,
+                        help="Format of the input files")
+    parser.add_argument("-w", "--writer", dest="writer",
+                        choices=allowed_translations.values(),
+                        default=list(allowed_translations.values())[0].format,
+                        help="Format of the output files")
     parser.add_argument("-o", "--output", dest="output",
-                        default=os.getcwd(), help="Output folder to which to write the files")
+                        default=os.getcwd(),
+                        help="Output folder to which to write the files")
     args = parser.parse_args()
 
-    rules = {}
-    if args.rules:
-        with open(args.rules, 'r') as f:
-            rules = json.load(f)
+    guide = {}
+    if args.guide:
+        with open(args.guide, 'r') as f:
+            guide = json.load(f)
 
-    translate(glob.glob(args.pattern), args.format, rules, Path(args.output))
+    translate(glob.glob(args.pattern), args.reader, args.writer, guide, Path(args.output))

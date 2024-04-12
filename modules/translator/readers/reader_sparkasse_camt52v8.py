@@ -1,23 +1,23 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from core.utils.xml_util import get_namespace, get_value, get_attr, get_element
-from core.generator.parsers.base import ParserBase
-from core.utils.collection import *
+from modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
+from modules.translator.readers.base import ParserBase
+from modules.utils.collection import *
 import pandas
 
 
-class ParserSparkasseCAMT52v8Builder(object):
+class ReaderSparkasseCAMT52v8Builder(object):
     def __init__(self):
         self._instance = None
 
     def __call__(self, **_ignored):
         if not self._instance:
-            self._instance = ParserSparkasseCAMT52v8()
+            self._instance = ReaderSparkasseCAMT52v8()
         return self._instance
 
 
-class ParserSparkasseCAMT52v8(ParserBase):
+class ReaderSparkasseCAMT52v8(ParserBase):
     format = "Sparkasse CAMT52v8"
 
     def __init__(self):
@@ -85,7 +85,7 @@ class ParserSparkasseCAMT52v8(ParserBase):
 
         return transactions
 
-    def parse(self, path: Path, **kwargs) -> List[Dict]:
+    def read(self, path: Path, **kwargs) -> List[Dict]:
         """
         Translate input to an output
 

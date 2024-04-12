@@ -5,18 +5,20 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas
-from pages.preprocessing import df_transactions, prefixes, original_accounts, explode_accounts
-from core.utils.colors import to_rgba
+from pages.preprocessing import df_transactions, prefixes, original_accounts, explode_accounts, df_prices
+from modules.utils.colors import to_rgba
 from dash import dcc, html, Input, Output, callback, MATCH, dash_table
 
 dash.register_page(__name__, path='/', order=1)
 
 # Preprocess dataframe for overview
-df_totals = df_transactions.groupby(["account"]).agg({
-    "amount": "sum",
-    "currency": "first"
+df_totals = df_transactions.groupby(["account", "currency"]).agg({
+    "amount": "sum"
 }).reset_index()
 df_totals["amount"] = df_totals["amount"].round(decimals=2)
+
+# Unify currencies for the overview
+
 
 
 def display_bar_totals():

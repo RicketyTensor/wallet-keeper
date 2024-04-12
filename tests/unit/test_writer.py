@@ -1,11 +1,11 @@
 import unittest
 import os
 from pathlib import Path
-from core.generator.writer_factory import factory
+from modules.translator.factory_writer import factory
 import pickle
 import pandas
-from core.utils.collection import *
-from core.utils.testing import assert_equal
+from modules.utils.collection import *
+from modules.utils.testing import assert_equal
 import json
 import filecmp
 import shutil

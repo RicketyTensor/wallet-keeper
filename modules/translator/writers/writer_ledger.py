@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from core.utils.xml_util import get_namespace, get_value, get_attr, get_element
-from core.generator.writers.base import WriterBase
-from core.utils.collection import *
+from modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
+from modules.translator.writers.base import WriterBase
+from modules.utils.collection import *
 from datetime import datetime
 import pandas
 import re

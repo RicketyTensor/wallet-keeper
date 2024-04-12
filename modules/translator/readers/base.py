@@ -6,7 +6,7 @@ import pandas
 
 class ParserBase(object):
     @abstractmethod
-    def parse(self, files: List[Path], output_file: Path, **kwargs) -> dict:
+    def read(self, files: List[Path], output_file: Path, **kwargs) -> dict:
         """
         Translate input to an output
 

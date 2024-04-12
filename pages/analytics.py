@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 import pandas
 from pages.preprocessing import df_transactions, accounts
 
-dash.register_page(__name__, order=4)
+dash.register_page(__name__, order=3)
 
 
 def make_account_selector(identifier):

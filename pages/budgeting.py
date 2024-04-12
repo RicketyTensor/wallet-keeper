@@ -7,9 +7,9 @@ import calendar
 from dateutil.relativedelta import relativedelta
 import pandas
 from pages.preprocessing import df_transactions, accounts, df_budget
-from core.utils.colors import to_rgba
+from modules.utils.colors import to_rgba
 
-dash.register_page(__name__, order=3)
+dash.register_page(__name__, order=4)
 
 
 def line_intersection(line1, line2):

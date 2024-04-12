@@ -187,6 +187,23 @@ for entry in budget:
 
 df_budget = df.groupby(["account", "currency"]).sum(numeric_only=True).reset_index()
 
+# Prepare dataframe for prices
+# ============================
+file_history = "price.db"
+df = pandas.read_csv(file_history, index_col=0, delimiter=",",
+                     names=["date", "to_currency", "from_amount", "from_currency"]
+                     ).reset_index()
+
+# Enhance dataframe
+df["date"] = pandas.to_datetime(df["date"])
+df["year"] = df.date.dt.year
+df["quarter"] = df.date.dt.quarter
+df["month"] = df.date.dt.month
+df["day"] = df.date.dt.day
+
+# Name properly
+df_prices = df.copy()
+
 pass
 
 
