@@ -6,7 +6,7 @@ from wallet_keeper.modules.core.transfer import Transfer
 
 class Transaction(object):
     def __init__(self, trans_date: datetime, book_date: datetime, name: str,
-                 labels: List[str], tags: Dict[str, str], comments: List[str],
+                 tags: List[str], properties: Dict[str, str], comments: List[str],
                  transfers: List[Transfer]):
         """
         Constructor
@@ -14,16 +14,16 @@ class Transaction(object):
         :param trans_date: date of initiating the transaction
         :param book_date: date on which the transaction has been booked
         :param name: name of the transaction
-        :param labels: list with labels (#LABEL)
-        :param tags: dictionary with tags and values
+        :param tags: list with labels (#LABEL)
+        :param properties: dictionary with tags and values
         :param comments: date on which the transaction has been booked
         :param transfers: changes to account states
         """
         self.trans_date = trans_date
         self.book_date = book_date
         self.name = name
-        self.labels = labels
         self.tags = tags
+        self.properties = properties
         self.comments = comments
         self.transfers = transfers
 

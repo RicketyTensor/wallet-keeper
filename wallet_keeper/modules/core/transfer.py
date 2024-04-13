@@ -4,20 +4,20 @@ from wallet_keeper.modules.core.dosh import Dosh
 
 class Transfer(object):
     def __init__(self, account: str, amount: Dosh, price: Dosh = None,
-                 labels: List[str] = None, tags: Dict[str, str] = None, comments: List[str] = None):
+                 tags: List[str] = None, properties: Dict[str, str] = None, comments: List[str] = None):
         """
         Constructor
 
         :param account: account name
         :param amount: amount transferred
         :param price: price paid
-        :param labels: list with labels (#LABEL)
-        :param tags: dictionary with tags and values
+        :param tags: list with labels (#LABEL)
+        :param properties: dictionary with tags and values
         :param comments: date on which the transaction has been booked
         """
         self.account = account
         self.amount = amount
         self.price = price
-        self.labels = labels
         self.tags = tags
+        self.properties = properties
         self.comments = comments
