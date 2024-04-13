@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import datetime
 import numpy
 import pandas
-from pages.preprocessing import df_transactions, df_tags, prefixes, accounts
+from wallet_keeper.pages.preprocessing import df_transactions, df_tags, prefixes, accounts
 import re
 
 dash.register_page(__name__, order=2)

@@ -5,8 +5,8 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas
-from pages.preprocessing import df_transactions, prefixes, original_accounts, explode_accounts, df_prices
-from modules.utils.colors import to_rgba
+from wallet_keeper.pages.preprocessing import df_transactions, prefixes, original_accounts, explode_accounts, df_prices
+from wallet_keeper.modules.utils.colors import to_rgba
 from dash import dcc, html, Input, Output, callback, MATCH, dash_table
 
 dash.register_page(__name__, path='/', order=1)

@@ -1,27 +1,27 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
-from modules.translator.writers.base import WriterBase
-from modules.utils.collection import *
+from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
+from wallet_keeper.modules.translator.writers.base import WriterBase
+from wallet_keeper.modules.utils.collection import *
 from datetime import datetime
 import pandas
 import re
 import os
 
 
-class WriterLedgerBuilder(object):
+class WriterMobusBuilder(object):
     def __init__(self):
         self._instance = None
 
     def __call__(self, **_ignored):
         if not self._instance:
-            self._instance = WriterLedger()
+            self._instance = WriterMobus()
         return self._instance
 
 
-class WriterLedger(WriterBase):
-    format = "Ledger"
+class WriterMobus(WriterBase):
+    format = "mobus"
 
     def __init__(self):
         pass

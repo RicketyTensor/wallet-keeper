@@ -6,8 +6,8 @@ import datetime
 import calendar
 from dateutil.relativedelta import relativedelta
 import pandas
-from pages.preprocessing import df_transactions, accounts, df_budget
-from modules.utils.colors import to_rgba
+from wallet_keeper.pages.preprocessing import df_transactions, accounts, df_budget
+from wallet_keeper.modules.utils.colors import to_rgba
 
 dash.register_page(__name__, order=4)
 

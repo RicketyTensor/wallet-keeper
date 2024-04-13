@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import numpy
 import pandas
-from pages.preprocessing import df_transactions, accounts
+from wallet_keeper.pages.preprocessing import df_transactions, accounts
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 import statsmodels.stats.api as sms

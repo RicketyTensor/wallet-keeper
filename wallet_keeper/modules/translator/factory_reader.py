@@ -1,5 +1,5 @@
-from modules.translator.readers.reader_sparkasse_camt52v8 import ReaderSparkasseCAMT52v8Builder, ReaderSparkasseCAMT52v8
-from modules.translator.readers.reader_ledger import ReaderLedgerBuilder, ReaderLedger
+from wallet_keeper.modules.translator.readers.reader_sparkasse_camt52v8 import ReaderSparkasseCAMT52v8Builder, ReaderSparkasseCAMT52v8
+from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedgerBuilder, ReaderLedger
 
 
 class ReaderFactory:
