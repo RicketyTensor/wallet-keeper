@@ -136,7 +136,7 @@ class ReaderLedger(ParserBase):
                 transactions.extend(self._read(include_path), **kwargs)
             else:
                 # Check for a date
-                pattern = ".*([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]).*"
+                pattern = "([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
                 match = re.findall(pattern, line)
                 if len(match) == 0 and not opened:  # skip initial lines of a file till a transaction is detected
                     continue
@@ -178,7 +178,7 @@ class ReaderLedger(ParserBase):
 
                     continue  # skip to the next line
 
-                # Check for transaction wide tags and comments
+            # Check for transaction wide tags and comments
                 if line.strip().startswith(";"):
                     l, t, c = ReaderLedger._extract_comments(line)
                     if len(l) > 0:
@@ -193,6 +193,15 @@ class ReaderLedger(ParserBase):
                     if entry:
                         account, amount, price, l, t, c = ReaderLedger._extract_transfer(entry,i, path)
                         transfers.append(Transfer(account, amount, price, l, t, c))
+
+        else:
+            # Close last open transaction
+            transactions.append(
+                Transaction(trans_date, book_date, name,
+                            labels, tags, comments,
+                            transfers
+                            )
+            )
 
         return transactions
 

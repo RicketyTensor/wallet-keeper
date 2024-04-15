@@ -4,6 +4,12 @@
 			<transaction_date>2021-10-01T00:00:00</transaction_date>
 			<booking_date>2021-10-01T00:00:00</booking_date>
 			<name>Rent</name>
+			<properties>
+				<property>
+					<name>Location</name>
+					<value>Dumpster Nr. 6</value>
+				</property>
+			</properties>
 			<transfers>
 				<transfer>
 					<account>Assets:Checking</account>
@@ -32,27 +38,79 @@
 		<transaction uid="5504c23d0e6a08fee1723357bfaac1e1">
 			<transaction_date>2021-10-01T00:00:00</transaction_date>
 			<booking_date>2021-10-01T00:00:00</booking_date>
-			<name>Extra</name>
+			<name>Buying</name>
+			<comments>
+				<comment>Had to buy extra beers</comment>
+			</comments>
 			<transfers>
 				<transfer>
 					<account>Assets:Checking</account>
 					<amount>
-						<value>-31.6</value>
+						<value>-52.6</value>
 						<currency>EUR</currency>
 					</amount>
 					<totalPrice>
-						<value>-31.6</value>
+						<value>-52.6</value>
 						<currency>EUR</currency>
 					</totalPrice>
 				</transfer>
 				<transfer>
-					<account>Expenses:Insurance:Dental</account>
+					<account>Expenses:Groceries</account>
 					<amount>
 						<value>31.6</value>
 						<currency>EUR</currency>
 					</amount>
 					<totalPrice>
 						<value>31.6</value>
+						<currency>EUR</currency>
+					</totalPrice>
+					<properties>
+						<property>
+							<name>Item</name>
+							<value>snacks</value>
+						</property>
+					</properties>
+				</transfer>
+				<transfer>
+					<account>Expenses:Alcohol</account>
+					<amount>
+						<value>21.0</value>
+						<currency>EUR</currency>
+					</amount>
+					<totalPrice>
+						<value>21.0</value>
+						<currency>EUR</currency>
+					</totalPrice>
+				</transfer>
+			</transfers>
+		</transaction>
+		<transaction uid="f60d922160c178d541932df1b71e2436">
+			<transaction_date>2021-10-01T00:00:00</transaction_date>
+			<booking_date>2021-10-03T00:00:00</booking_date>
+			<name>Life</name>
+			<comments>
+				<comment>#Insurance</comment>
+			</comments>
+			<transfers>
+				<transfer>
+					<account>Assets:Checking</account>
+					<amount>
+						<value>-190.0</value>
+						<currency>EUR</currency>
+					</amount>
+					<totalPrice>
+						<value>-190.0</value>
+						<currency>EUR</currency>
+					</totalPrice>
+				</transfer>
+				<transfer>
+					<account>Expenses:Insurance:Life</account>
+					<amount>
+						<value>190.0</value>
+						<currency>EUR</currency>
+					</amount>
+					<totalPrice>
+						<value>190.0</value>
 						<currency>EUR</currency>
 					</totalPrice>
 				</transfer>

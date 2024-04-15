@@ -43,7 +43,7 @@ class ReaderMobusXML(ParserBase):
             amount = Dosh(get_value(e_tran, "ns:{}/ns:{}".format(cs_amount, cs_value), ns),
                           get_value(e_tran, "ns:{}/ns:{}".format(cs_amount, cs_currency), ns))
             price = Dosh(get_value(e_tran, "ns:{}/ns:{}".format(cs_total_price, cs_value), ns),
-                        get_value(e_tran, "ns:{}/ns:{}".format(cs_total_price, cs_currency), ns))
+                         get_value(e_tran, "ns:{}/ns:{}".format(cs_total_price, cs_currency), ns))
 
             # Tagging and co.
             tags = self._build_tags(e_tran, ns)
@@ -83,7 +83,9 @@ class ReaderMobusXML(ParserBase):
         e_props = get_element(elem, "ns:{}".format(cs_properties), ns, empty=True)
         if e_props:
             for e_prop in e_props.findall("ns:{}".format(cs_property), ns):
-                properties.update({e_prop.tag: e_prop.text})
+                properties.update({
+                    get_value(e_prop, "ns:{}".format(cs_name), ns): get_value(e_prop, "ns:{}".format(cs_value), ns)
+                })
 
         return properties
 
