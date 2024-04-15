@@ -1,5 +1,6 @@
 from wallet_keeper.modules.translator.readers.reader_camt52v8 import ReaderCAMT52v8Builder, ReaderCAMT52v8
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedgerBuilder, ReaderLedger
+from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXMLBuilder, ReaderMobusXML
 
 
 class ReaderFactory:
@@ -19,3 +20,4 @@ class ReaderFactory:
 factory = ReaderFactory()
 factory.register_builder(ReaderCAMT52v8.format, ReaderCAMT52v8Builder())
 factory.register_builder(ReaderLedger.format, ReaderLedgerBuilder())
+factory.register_builder(ReaderMobusXML.format, ReaderMobusXMLBuilder())

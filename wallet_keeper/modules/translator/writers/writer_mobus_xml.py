@@ -3,7 +3,6 @@ from typing import List, Dict
 import xml.etree.ElementTree as ET
 from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.writers.base import WriterBase
-from wallet_keeper.modules.utils.collection import *
 from wallet_keeper.modules.core.transaction import Transaction
 from wallet_keeper.modules.core.transfer import Transfer
 from datetime import datetime
@@ -11,6 +10,8 @@ import pandas
 import re
 import os
 import hashlib
+from wallet_keeper.modules.translator.common.mobus_naming import *
+
 
 class WriterMobusXMLBuilder(object):
     def __init__(self):
@@ -23,7 +24,7 @@ class WriterMobusXMLBuilder(object):
 
 
 class WriterMobusXML(WriterBase):
-    format = "mobus-xml"
+    format = cs_xml_root
 
     def __init__(self):
         pass
@@ -39,23 +40,23 @@ class WriterMobusXML(WriterBase):
         """
         # Tags
         if len(tran.tags) > 0:
-            e_tags = ET.SubElement(elem, "tags")
+            e_tags = ET.SubElement(elem, cs_tags)
             for tag in tran.tags:
-                ET.SubElement(e_tags, "tag").text = tag
+                ET.SubElement(e_tags, cs_tag).text = tag
 
         # Properties
         if len(tran.properties) > 0:
-            e_props = ET.SubElement(elem, "properties")
+            e_props = ET.SubElement(elem, cs_properties)
             for prop, val in tran.properties.items():
-                e_prop = ET.SubElement(e_props, "property")
-                ET.SubElement(e_prop, "name").text = prop
-                ET.SubElement(e_prop, "value").text = val
+                e_prop = ET.SubElement(e_props, cs_property)
+                ET.SubElement(e_prop, cs_name).text = prop
+                ET.SubElement(e_prop, cs_value).text = val
 
         # Comments
         if len(tran.comments) > 0:
-            e_comm = ET.SubElement(elem, "comments")
+            e_comm = ET.SubElement(elem, cs_comments)
             for comment in tran.comments:
-                ET.SubElement(e_comm, "comment").text = comment
+                ET.SubElement(e_comm, cs_comment).text = comment
 
         pass
 
@@ -69,18 +70,18 @@ class WriterMobusXML(WriterBase):
         :return:
         """
         # Account
-        t = ET.SubElement(elem, "transfer")
-        ET.SubElement(t, "account").text = tran.account
+        t = ET.SubElement(elem, cs_transfer)
+        ET.SubElement(t, cs_account).text = tran.account
 
         # Amount
-        a = ET.SubElement(t, "amount")
-        ET.SubElement(a, "value").text = str(tran.amount.value)
-        ET.SubElement(a, "currency").text = tran.amount.currency
+        a = ET.SubElement(t, cs_amount)
+        ET.SubElement(a, cs_value).text = str(tran.amount.value)
+        ET.SubElement(a, cs_currency).text = tran.amount.currency
 
         # Price
-        p = ET.SubElement(t, "totalPrice")
-        ET.SubElement(p, "value").text = str(tran.price.value)
-        ET.SubElement(p, "currency").text = tran.price.currency
+        p = ET.SubElement(t, cs_total_price)
+        ET.SubElement(p, cs_value).text = str(tran.price.value)
+        ET.SubElement(p, cs_currency).text = tran.price.currency
 
         # Comments
         WriterMobusXML._write_comments(tran, t)
@@ -100,33 +101,32 @@ class WriterMobusXML(WriterBase):
         roots = []
 
         # Start XML file
-        e_root = ET.Element('mobusTransfer')
+        e_root = ET.Element(cs_xml_root)
 
-        # Add transactions
-        e_trans = ET.SubElement(e_root, "transactions")
-
+        # Go over transactions
+        e_trans = ET.SubElement(e_root, cs_transactions)
         for i, t in enumerate(transactions):
-            e_tran = ET.SubElement(e_trans, "transaction")
+            e_tran = ET.SubElement(e_trans, cs_transaction)
 
             # Write UID
             uid = hashlib.new("md5")
-            uid.update((t.trans_date.strftime("%Y%m%d%H%M%S") + str(i)).encode("utf-8"))
+            uid.update((t.trans_date.strftime(datetime_format) + str(i)).encode("utf-8"))
             e_tran.set("uid", uid.hexdigest())
 
             # Write dates
-            ET.SubElement(e_tran, "transaction_date").text = t.trans_date.strftime("%Y-%m-%dT%H:%M:%S")
-            ET.SubElement(e_tran, "booking_date").text = t.book_date.strftime("%Y-%m-%dT%H:%M:%S")
+            ET.SubElement(e_tran, cs_transaction_date).text = t.trans_date.strftime(datetime_format)
+            ET.SubElement(e_tran, cs_booking_date).text = t.book_date.strftime(datetime_format)
 
             # Write name
-            ET.SubElement(e_tran, "name").text = t.name
+            ET.SubElement(e_tran, cs_name).text = t.name
 
             # Write comments
             WriterMobusXML._write_comments(t, e_tran)
 
             # Write transfer
-            ET.SubElement(e_tran, "transfers")
+            e_transfers = ET.SubElement(e_tran, cs_transfers)
             for entry in t.transfers:
-                WriterMobusXML._write_transfer(entry, e_tran)
+                WriterMobusXML._write_transfer(entry, e_transfers)
 
         return [e_root]
 

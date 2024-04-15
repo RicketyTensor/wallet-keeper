@@ -58,7 +58,7 @@ class Transaction(object):
         currency = currencies[0]
         delta = Dosh("0.0", currency)
         for t in transfers:
-            delta += t.price
+            delta -= t.price
 
         if delta.value != 0.0 and len(empty_transfers) == 0:
             raise ValueError("The following transaction cannot be balanced!\n"
