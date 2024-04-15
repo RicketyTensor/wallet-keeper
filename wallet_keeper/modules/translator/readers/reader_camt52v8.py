@@ -1,24 +1,24 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
-from modules.translator.readers.base import ParserBase
-from modules.utils.collection import *
+from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
+from wallet_keeper.modules.translator.readers.base import ParserBase
+from wallet_keeper.modules.utils.collection import *
 import pandas
 
 
-class ReaderSparkasseCAMT52v8Builder(object):
+class ReaderCAMT52v8Builder(object):
     def __init__(self):
         self._instance = None
 
     def __call__(self, **_ignored):
         if not self._instance:
-            self._instance = ReaderSparkasseCAMT52v8()
+            self._instance = ReaderCAMT52v8()
         return self._instance
 
 
-class ReaderSparkasseCAMT52v8(ParserBase):
-    format = "Sparkasse CAMT52v8"
+class ReaderCAMT52v8(ParserBase):
+    format = "camt52v8"
 
     def __init__(self):
         pass
@@ -29,7 +29,7 @@ class ReaderSparkasseCAMT52v8(ParserBase):
 
         :param path: file to translate
         :param output_file: file into which to write
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with information
         """
         tree = ET.parse(path)
@@ -91,7 +91,7 @@ class ReaderSparkasseCAMT52v8(ParserBase):
 
         :param path: list of files to translate
 
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
         return self._read(path, **kwargs)

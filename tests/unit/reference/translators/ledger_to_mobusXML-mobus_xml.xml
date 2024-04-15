@@ -1,0 +1,60 @@
+<mobusTransfer>
+	<transactions>
+		<transaction uid="84ab08a664881fcba2c1d36cbf729e43">
+			<transaction_date>2021-10-01T00:00:00</transaction_date>
+			<booking_date>2021-10-01T00:00:00</booking_date>
+			<name>Rent</name>
+			<transfers />
+			<transfer>
+				<account>Assets:Checking</account>
+				<amount>
+					<value>333.33</value>
+					<currency>EUR</currency>
+				</amount>
+				<totalPrice>
+					<value>333.33</value>
+					<currency>EUR</currency>
+				</totalPrice>
+			</transfer>
+			<transfer>
+				<account>Expenses:Rent</account>
+				<amount>
+					<value>333.33</value>
+					<currency>EUR</currency>
+				</amount>
+				<totalPrice>
+					<value>333.33</value>
+					<currency>EUR</currency>
+				</totalPrice>
+			</transfer>
+		</transaction>
+		<transaction uid="07126a45263de62386e22d6a63745d2e">
+			<transaction_date>2021-10-01T00:00:00</transaction_date>
+			<booking_date>2021-10-01T00:00:00</booking_date>
+			<name>Extra</name>
+			<transfers />
+			<transfer>
+				<account>Assets:Checking</account>
+				<amount>
+					<value>31.6</value>
+					<currency>EUR</currency>
+				</amount>
+				<totalPrice>
+					<value>31.6</value>
+					<currency>EUR</currency>
+				</totalPrice>
+			</transfer>
+			<transfer>
+				<account>Expenses:Insurance:Dental</account>
+				<amount>
+					<value>31.6</value>
+					<currency>EUR</currency>
+				</amount>
+				<totalPrice>
+					<value>31.6</value>
+					<currency>EUR</currency>
+				</totalPrice>
+			</transfer>
+		</transaction>
+	</transactions>
+</mobusTransfer>

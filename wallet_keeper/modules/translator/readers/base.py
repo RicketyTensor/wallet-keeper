@@ -12,7 +12,7 @@ class ParserBase(object):
 
         :param files: list of files to translate
         :param output_file: file into which to write
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
         pass

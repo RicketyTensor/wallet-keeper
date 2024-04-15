@@ -11,15 +11,17 @@ import glob
 import pandas
 
 
-def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None) -> None:
+def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None,
+              tag: str = None) -> None:
     """
     Translate to ledger format
 
     :param files: files to parse and use for database generation
-    :param reader_format: parser to use for reading the files
-    :param writer_format: parser to use for writing the files
+    :param reader_format: reader to use for reading the files
+    :param writer_format: reader to use for writing the files
     :param rules: dictionary with rules for a deterministic tagging
     :param output: path to an output file
+    :param tag: tag to add to the generated file names
     :return: path to a written database
     """
     reader = fr.create(reader_format)
@@ -30,7 +32,7 @@ def translate(files: List[Path], reader_format: str, writer_format: str, rules: 
 
     # 2. Write
     writer = fw.create(writer_format)
-    matched = writer.write(transactions, rules, output)
+    files = writer.write(transactions, rules, output, tag)
 
     pass
 

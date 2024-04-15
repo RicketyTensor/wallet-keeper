@@ -1,4 +1,4 @@
-from wallet_keeper.modules.translator.readers.reader_sparkasse_camt52v8 import ReaderSparkasseCAMT52v8Builder, ReaderSparkasseCAMT52v8
+from wallet_keeper.modules.translator.readers.reader_camt52v8 import ReaderCAMT52v8Builder, ReaderCAMT52v8
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedgerBuilder, ReaderLedger
 
 
@@ -17,5 +17,5 @@ class ReaderFactory:
 
 
 factory = ReaderFactory()
-factory.register_builder(ReaderSparkasseCAMT52v8.format, ReaderSparkasseCAMT52v8Builder())
+factory.register_builder(ReaderCAMT52v8.format, ReaderCAMT52v8Builder())
 factory.register_builder(ReaderLedger.format, ReaderLedgerBuilder())

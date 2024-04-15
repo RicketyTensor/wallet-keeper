@@ -112,7 +112,7 @@ class ReaderLedger(ParserBase):
 
         :param path: file to translate
         :param output_file: file into which to write
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with information
         """
         with open(path, "r") as f:
@@ -202,7 +202,7 @@ class ReaderLedger(ParserBase):
 
         :param path: list of files to translate
 
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
         return self._read(path, **kwargs)

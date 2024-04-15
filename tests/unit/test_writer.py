@@ -1,11 +1,12 @@
 import unittest
 import os
 from pathlib import Path
-from modules.translator.factory_writer import factory
+from wallet_keeper.modules.translator.factory_writer import factory
+from wallet_keeper.modules.translator.
 import pickle
 import pandas
-from modules.utils.collection import *
-from modules.utils.testing import assert_equal
+from wallet_keeper.modules.utils.collection import *
+from wallet_keeper.modules.utils.testing import assert_equal
 import json
 import filecmp
 import shutil
@@ -16,7 +17,7 @@ class TestWriter(unittest.TestCase):
     def setUpClass(cls):
         cls.update = False
         cls.rules = {
-            "output-common.ledger": {
+            "ledger.ledger": {
                 "Extra Dental Insurance": {
                     cs_rule: {cs_creditor: ".*Krakenversicherung.*"},
                     cs_from: "Assets:Checking",
@@ -37,9 +38,9 @@ class TestWriter(unittest.TestCase):
 
         pass
 
-    def test_writer_ledger(self):
+    def test_writer_camt_to_ledger(self):
         base = Path(os.path.dirname(__file__))
-        file = base / "reference" / "camt52v8" / "sample_1.json"
+        file = base / "reference" / "input" / "ledger.json"
 
         # Read file with data and transform to pandas DataFrame
         with open(file, 'r') as f:

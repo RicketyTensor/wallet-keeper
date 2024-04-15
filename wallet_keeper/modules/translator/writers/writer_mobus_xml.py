@@ -12,18 +12,18 @@ import re
 import os
 import hashlib
 
-class WriterMobusBuilder(object):
+class WriterMobusXMLBuilder(object):
     def __init__(self):
         self._instance = None
 
     def __call__(self, **_ignored):
         if not self._instance:
-            self._instance = WriterMobus()
+            self._instance = WriterMobusXML()
         return self._instance
 
 
-class WriterMobus(WriterBase):
-    format = "mobus"
+class WriterMobusXML(WriterBase):
+    format = "mobus-xml"
 
     def __init__(self):
         pass
@@ -83,7 +83,7 @@ class WriterMobus(WriterBase):
         ET.SubElement(p, "currency").text = tran.price.currency
 
         # Comments
-        WriterMobus._write_comments(tran, t)
+        WriterMobusXML._write_comments(tran, t)
 
         pass
 
@@ -94,7 +94,7 @@ class WriterMobus(WriterBase):
 
         :param path: file to translate
         :param output_file: file into which to write
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: matched and unmatched transaction lines
         """
         roots = []
@@ -121,31 +121,32 @@ class WriterMobus(WriterBase):
             ET.SubElement(e_tran, "name").text = t.name
 
             # Write comments
-            WriterMobus._write_comments(t, e_tran)
+            WriterMobusXML._write_comments(t, e_tran)
 
             # Write transfer
             ET.SubElement(e_tran, "transfers")
             for entry in t.transfers:
-                WriterMobus._write_transfer(entry, e_tran)
+                WriterMobusXML._write_transfer(entry, e_tran)
 
         return [e_root]
 
-    def write(self, transactions: List[Transaction], rules: Dict[str, Dict], path: Path, **kwargs) -> List[Path]:
+    def write(self, transactions: List[Transaction], rules: Dict[str, Dict], path: Path, prefix="", **kwargs) -> List[Path]:
         """
         Write processed data to a file
 
         :param transactions: transactions to write
         :param rules: rules to assign transactions to accounts
         :param path: path to write to
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
+        :param prefix: tag to add to the generated file names
         :return: dictionary with data as lists
         """
         files = []
 
-        roots = WriterMobus._write(transactions, rules)
+        roots = WriterMobusXML._write(transactions, rules)
         for r in roots:
             # Write the xml file
-            nf = path / "mobus_transfer.xml"
+            nf = path / "{}mobus_xml.xml".format(prefix)
             tree = ET.ElementTree(r)
             ET.indent(tree, space="\t", level=0)
             tree.write(str(nf), encoding="utf-8")

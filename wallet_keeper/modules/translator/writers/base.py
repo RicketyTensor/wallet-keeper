@@ -14,7 +14,7 @@ class WriterBase(object):
         :param rules: rules to assign transactions to accounts
         :param path: path to write to
 
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
         pass

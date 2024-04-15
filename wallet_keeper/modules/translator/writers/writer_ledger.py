@@ -141,7 +141,7 @@ class WriterLedger(WriterBase):
 
         :param path: file to translate
         :param output_file: file into which to write
-        :param kwargs: parser specific arguments
+        :param kwargs: reader specific arguments
         :return: matched and unmatched transaction lines
         """
         # Sort transactions
@@ -181,15 +181,15 @@ class WriterLedger(WriterBase):
 
         return matched, unmatched
 
-    def write(self, data: List[Dict], rules: Dict[str, Dict], path: Path, **kwargs) -> List[str]:
+    def write(self, data: List[Dict], rules: Dict[str, Dict], path: Path, prefix: str = "", **kwargs) -> List[str]:
         """
         Write processed data to a file
 
         :param data: data to write
         :param rules: rules to assign transactions to accounts
         :param path: path to write to
-
-        :param kwargs: parser specific arguments
+        :param prefix: tag to add to the generated file names
+        :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
         files = []
@@ -198,7 +198,7 @@ class WriterLedger(WriterBase):
             matched, unmatched = self._write(unmatched, rule, **kwargs)
 
             # Write matched
-            outfile = path / key
+            outfile = path / "{}{}".format(prefix, key)
             with open(outfile, "w") as of:
                 of.writelines(matched)
             files.append(outfile)
@@ -206,7 +206,7 @@ class WriterLedger(WriterBase):
 
         # Write unmatched
         if len(unmatched) > 0:
-            outfile = path / "output-unmatched.ledger"
+            outfile = path / "{}unmatched.ledger".format(prefix)
             with open(outfile, "w") as of:
                 for i, d in enumerate(unmatched):
                     # Write in a ledger format for simpler manual work
