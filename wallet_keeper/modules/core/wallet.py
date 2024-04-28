@@ -1,11 +1,14 @@
 import pandas
+from typing import List, Dict
+from wallet_keeper.modules.core.transaction import Transaction
+
 
 class Wallet(object):
     def __init__(self):
         self.transactions = None
         self.accounts = None
 
-    def build(self, transactions):
+    def build(self, transactions: List[Transaction]):
         self.transactions = transactions
         self.accounts = self._extract_accounts()
 
@@ -21,20 +24,41 @@ class Wallet(object):
 
         return sorted(list(set(accounts)))
 
-    def get_pandas_transactions(self):
+    def get_list_accounts(self):
         """
-        Sum up account totals
+        Get list of accounts
+
+        :return:
+        """
+        return self.accounts
+
+    def get_pandas_transfers(self):
+        """
+        Get DataFrame of transfers
 
         :return:
         """
         data = []
         for t in self.transactions:
-            data.extend([(tt.account, tt.amount.value, tt.amount.currency) for tt in t.transfers])
-        df = pandas.DataFrame(data, columns=["account", "amount", "currency"])
+            data.extend([(tt.account, t.trans_date, t.name,
+                          tt.amount.value, tt.amount.currency,
+                          tt.price.value, tt.price.currency) for tt in t.transfers])
+        df = pandas.DataFrame(data, columns=["account", "date", "name", "amount", "amount_currency", "price",
+                                             "price_currency"])
 
         return df
 
-    def get_pandas_totals(self, value="amount", hierarchy:bool=False):
+    def get_time_span(self):
+        """
+        Get time span of available data
+
+        :return:
+        """
+        dates = [t.trans_date for t in self.transactions]
+
+        return min(dates), max(dates)
+
+    def get_pandas_totals(self, value="amount", hierarchy: bool = False):
         """
         Sum up account totals
 
@@ -78,4 +102,3 @@ class Wallet(object):
             return df.groupby(["account", "currency"]).agg({
                 "amount": "sum"
             }).reset_index()
-

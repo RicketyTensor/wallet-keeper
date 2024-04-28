@@ -97,6 +97,23 @@ def prepare(file: Path):
     reader = factory_reader.create(ReaderMobusXML.format)
     wallet.build(reader.read(Path(file)))
 
+def get_transfers():
+    global wallet
+
+    # Get totals
+    df = wallet.get_pandas_transfers()
+
+    return df
+
+def get_time_span():
+    global wallet
+
+    return wallet.get_time_span()
+
+def get_accounts():
+    global wallet
+
+    return wallet.get_list_accounts()
 
 def get_account_totals():
     global wallet

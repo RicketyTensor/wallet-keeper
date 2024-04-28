@@ -19,7 +19,7 @@ class Transaction(object):
         :param comments: date on which the transaction has been booked
         :param transfers: changes to account states
         """
-        self.trans_date = trans_date
+        self.trans_date = trans_date if trans_date else book_date
         self.book_date = book_date
         self.name = name
         self.tags = tags
