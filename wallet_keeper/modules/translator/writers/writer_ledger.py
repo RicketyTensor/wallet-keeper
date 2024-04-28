@@ -21,7 +21,7 @@ class WriterLedgerBuilder(object):
 
 
 class WriterLedger(WriterBase):
-    format = "Ledger"
+    format = "ledger"
 
     def __init__(self):
         pass

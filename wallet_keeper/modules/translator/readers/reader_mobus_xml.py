@@ -23,7 +23,7 @@ class ReaderMobusXMLBuilder(object):
 
 
 class ReaderMobusXML(ParserBase):
-    format = "camt52v8"
+    format = cs_xml_root
 
     def __init__(self):
         pass

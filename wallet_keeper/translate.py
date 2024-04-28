@@ -12,7 +12,7 @@ import pandas
 
 
 def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None,
-              tag: str = None) -> None:
+              tag: str = "") -> None:
     """
     Translate to ledger format
 

@@ -1,39 +1,31 @@
 import dash
 import numpy
-from dash import dcc
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas
-from wallet_keeper.pages.preprocessing import df_transactions, prefixes, original_accounts, explode_accounts, df_prices
-from wallet_keeper.modules.utils.colors import to_rgba
-from dash import dcc, html, Input, Output, callback, MATCH, dash_table
+from dash import dcc, html
+from wallet_keeper.modules.visualizer import processing
+from decimal import Decimal
 
-dash.register_page(__name__, path='/', order=1)
-
-# Preprocess dataframe for overview
-df_totals = df_transactions.groupby(["account", "currency"]).agg({
-    "amount": "sum"
-}).reset_index()
-df_totals["amount"] = df_totals["amount"].round(decimals=2)
-
-# Unify currencies for the overview
-
-
+dash.register_page(__name__, path='/', order=1, name="Spending overview")
 
 def display_bar_totals():
-    df = df_totals.copy()
-    df = df[df.account.isin(prefixes)].reset_index()
+    df = processing.get_account_totals()
+    mask = df.depth == 0
+    df = df[mask]
+    prefixes = df.account.values
 
     # Show discrepancies
-    delta_name = "Unaccouted for"
+    delta_name = "Unaccounted for"
     for name, group in df.groupby("currency"):
         delta = -1 * df.amount.sum()
         if delta != 0.0:
             df.loc[len(df)] = {
                 "account": delta_name,
                 "amount": delta,
-                "currency": name
+                "currency": name,
+                "depth": 0
             }
 
     # Assign pattern shape
@@ -41,7 +33,7 @@ def display_bar_totals():
     pattern_shape_map.update({delta_name: "/"})
 
     # Figure
-    limit = df.amount.apply("abs").max().round(-3)
+    limit = df.amount.apply("abs").max()
     fig = go.Figure(
         px.bar(
             df,
@@ -55,7 +47,7 @@ def display_bar_totals():
         )
     )
 
-    fig.update_layout(title="Current totals")
+    fig.update_layout(title="Transaction split")
     fig.update_layout(xaxis_range=[-limit, limit])
     fig.update_xaxes(title_text="Account")
     fig.update_yaxes(title_text="Amount")
@@ -69,10 +61,7 @@ def display_bar_totals():
     return fig
 
 
-def display_accounts_sunburst(name):
-    df = df_totals[df_totals.account.isin(original_accounts)].copy()
-    df = explode_accounts(df)
-
+def display_accounts_sunburst(name, df):
     # Select group
     df = df[(df.account.str.startswith(name))]
     df = df.sort_values("account")
@@ -80,24 +69,25 @@ def display_accounts_sunburst(name):
     # Apply custom summation in order to handle negative values
     df["sign"] = df["amount"].apply(lambda x: -1 if x < 0 else 1)
     df["amount"] = df["amount"].abs()
-    df["account"] = df["account"].apply(lambda x: x.replace(" ", "_"))
 
     # Sum up backwards
     if len(df) > 0:
-        for i, d in enumerate(range(1, max(df.depth) + 1)[::-1]):
-            mask = df.depth == d
-            dfg = df[mask].groupby(["parent"]).agg({
-                "amount": "sum",
-                "currency": "first"
-            }).reset_index()
-            dfg = dfg.rename(columns={"parent": "account"})
-            dfg["name"] = dfg["account"].apply(lambda x: x.split(":")[-1])
-            dfg["parent"] = dfg["account"].apply(lambda x: ":".join(x.split(":")[:-1]))
-            dfg["sign"] = 1
-            dfg["amount"] = dfg["amount"].round(2)
-            dfg["depth"] = d - 1
-            df = pandas.concat([df, dfg])
+        # reset parents
+        for j, r in df.iterrows():
+            if r.parent:
+                df.loc[df.account == r.parent, "amount"] = Decimal(0.0)
 
+        for i in list(range(1, max(df.depth) + 1))[::-1]:
+            mask = df.depth == i
+            groups = df[mask].groupby(["account", "currency"])
+            for name, group in groups:
+                parent = ":".join(name[0].split(":")[:-1])
+                if parent:
+                    for j, r in group.iterrows():
+                        df.loc[df.account == parent, "amount"] += r.amount
+
+    df.account = df.account.apply(lambda x: x.replace(" ", "_"))
+    df["name"] = df.account.apply(lambda x: x.split(":")[-1])
     ids = list(df.account.apply(lambda x: ":".join(x.split(":")[1:])))
     parents = list(df.parent.apply(lambda x: ":".join(x.split(":")[1:])))
     labels = list(df.name)
@@ -123,12 +113,17 @@ def display_accounts_sunburst(name):
 
 
 def sunburst_grid():
+    df = processing.get_account_totals()
+    prefixes = list(df[df.depth == 0].account.values)
+
     n = len(prefixes)
-    if n % 2 > 0:
-        prefix_matrix = prefixes + [None]
+    ncol = 4
+    nrow = 1 + n // ncol if n % ncol else 1
+    if nrow > 1:
+        prefix_matrix = prefixes + [None] * (ncol - n % ncol)
     else:
         prefix_matrix = prefixes
-    prefix_matrix = numpy.array(prefix_matrix).reshape(-1, 2)
+    prefix_matrix = numpy.array(prefix_matrix).reshape(-1, ncol)
 
     grid = []
     for row in prefix_matrix:
@@ -140,18 +135,19 @@ def sunburst_grid():
                         html.H4(col.capitalize()),
                         dcc.Graph(
                             id="overview_graph_sunburst_{}".format(col),
-                            figure=display_accounts_sunburst(col))
+                            figure=display_accounts_sunburst(col, df))
                     ],
-                        width=6
+                        width=12 / ncol
                     )
                 )
             else:
                 children.append(
                     dbc.Col([],
-                            width=6
+                            width=12 / ncol
                             )
                 )
         grid.append(dbc.Row(children=children))
+
     return grid
 
 

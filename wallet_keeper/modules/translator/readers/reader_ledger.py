@@ -195,13 +195,14 @@ class ReaderLedger(ParserBase):
                         transfers.append(Transfer(account, amount, price, l, t, c))
 
         else:
-            # Close last open transaction
-            transactions.append(
-                Transaction(trans_date, book_date, name,
-                            labels, tags, comments,
-                            transfers
-                            )
-            )
+            if opened:
+                # Close last open transaction
+                transactions.append(
+                    Transaction(trans_date, book_date, name,
+                                labels, tags, comments,
+                                transfers
+                                )
+                )
 
         return transactions
 
