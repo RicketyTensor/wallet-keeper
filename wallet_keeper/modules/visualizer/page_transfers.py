@@ -22,19 +22,18 @@ def make_account_selector():
     return html.Div([html.H5("Select accounts:"), selector])
 
 
-def make_tag_filter():
-    # TODO: Fix the filtering
+def make_properties_filter():
     field = html.Div([
-        html.H5("Filter tags using regex:"),
+        html.H5("Filter properties using regex:"),
         dbc.Row(children=[
             dbc.Col([dcc.Dropdown(
-                id="filter_tag_name",
-                placeholder="Tag to filter",
+                id="filter_prop_name",
+                placeholder="Property to filter",
                 options=[],
                 className="dbc"
             )]),
             dbc.Col([dcc.Input(
-                id="filter_tag_value",
+                id="filter_prop_value",
                 type="text",
                 placeholder="regex pattern",
             )])
@@ -58,39 +57,36 @@ graph_history = html.Div([
 
 @callback(
     Output('filtered_transactions', 'data'),
-    Output('filtered_tags', 'data'),
-    Input("filter_tag_name", "value"),
-    Input("filter_tag_value", "value"),
+    Output('filtered_properties', 'data'),
+    Input("filter_prop_name", "value"),
+    Input("filter_prop_value", "value"),
     Input("transaction_account_selector_dropdown", "value"),
 )
 def filter_transactions(tag, reg, selected):
-    # TODO: Fix the filtering
-
     if not selected:
         return {}, {}
 
-    df = processing.get_transfers()
-    # dft = df_tags.copy()
+    df, df_tags, df_properties, df_comments = processing.get_transfers()
 
     # Mask for account selection
     mask = df.account.isin(selected) if isinstance(selected, list) else df.account.isin([selected])
     df = df[mask]
-    # dft = dft[mask]
-    #
-    # # Filter by tag
-    # if tag:
-    #     mask = dft[tag] != ""
-    #     df = df[mask]
-    #     dft = dft[mask]
-    #
-    # # Filter by regex
-    # if reg and tag and not reg.endswith("\\"):
-    #     pattern = re.compile(reg)
-    #     mask = dft[tag].apply(lambda x: len(re.findall(pattern, x)) > 0)
-    #     df = df[mask]
-    #     dft = dft[mask]
+    dfp = df_properties[mask]
 
-    return df.to_dict(orient="records"), {}  # dft.to_dict(orient="records")
+    # Filter by property
+    if tag:
+        mask = df_tags[tag] != ""
+        df = df[mask]
+        dfp = dfp[mask]
+
+    # Filter by regex
+    if reg and tag and not reg.endswith("\\"):
+        pattern = re.compile(reg)
+        mask = df_tags[tag].apply(lambda x: len(re.findall(pattern, x)) > 0)
+        df = df[mask]
+        dfp = dfp[mask]
+
+    return df.to_dict(orient="records"), dfp.to_dict(orient="records")
 
 
 # Callback to show table of transactions
@@ -99,9 +95,9 @@ def filter_transactions(tag, reg, selected):
     Input('history_graph', 'clickData'),
     Input("history_graph", "figure"),
     Input("filtered_transactions", "data"),
-    Input("filtered_tags", "data"),
+    Input("filtered_properties", "data"),
 )
-def display_click_data(click_data, fig, filtered_transactions, filtered_tags):
+def display_click_data(click_data, fig, filtered_transactions, filtered_properties):
     if not filtered_transactions or not click_data:
         return []
 
@@ -109,7 +105,7 @@ def display_click_data(click_data, fig, filtered_transactions, filtered_tags):
     df = pandas.DataFrame(filtered_transactions)
     df["date"] = pandas.to_datetime(df["date"])
 
-    dft = pandas.DataFrame(filtered_tags)
+    dfp = pandas.DataFrame(filtered_properties)
 
     pt = click_data["points"][0]
     date = pt["x"]
@@ -130,8 +126,8 @@ def display_click_data(click_data, fig, filtered_transactions, filtered_tags):
                  dbc.Badge(name, className="badge bg-info")]
         entries.append(html.P(entry))
 
-        if len(dft) > 0:
-            tags = dft.iloc[index, :]
+        if len(dfp) > 0:
+            tags = dfp.iloc[index, :]
             rows = []
             for name, value in tags.items():
                 if value:
@@ -150,9 +146,9 @@ def display_click_data(click_data, fig, filtered_transactions, filtered_tags):
     Output("history_graph", "figure"),
     Input("cumsum_switch", "value"),
     Input("filtered_transactions", "data"),
-    Input("filtered_tags", "data"),
+    Input("filtered_properties", "data"),
 )
-def make_graph_history(cs, filtered_transactions, filtered_tags):
+def make_graph_history(cs, filtered_transactions, filtered_properties):
     if not filtered_transactions:
         return go.Figure()
 
@@ -280,11 +276,11 @@ def make_graph_yearly(filtered_transactions):
 
 layout = dbc.Container(children=[
     dcc.Store(id="filtered_transactions"),
-    dcc.Store(id="filtered_tags"),
+    dcc.Store(id="filtered_properties"),
     dbc.Row(children=[
         # Account selector
         dbc.Col(children=[make_account_selector(),
-                          make_tag_filter()
+                          make_properties_filter()
                           ], width={"size": 2}),
         # Accounting
         dbc.Col(children=[

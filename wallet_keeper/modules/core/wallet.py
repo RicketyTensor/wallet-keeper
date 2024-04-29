@@ -1,7 +1,7 @@
 import pandas
 from typing import List, Dict
 from wallet_keeper.modules.core.transaction import Transaction
-
+from copy import copy, deepcopy
 
 class Wallet(object):
     def __init__(self):
@@ -39,14 +39,40 @@ class Wallet(object):
         :return:
         """
         data = []
+        tags = []
+        properties = []
+        comments = []
         for t in self.transactions:
-            data.extend([(tt.account, t.trans_date, t.name,
+            data.extend([(tt.account, t.trans_date, t.book_date, t.name,
                           tt.amount.value, tt.amount.currency,
                           tt.price.value, tt.price.currency) for tt in t.transfers])
-        df = pandas.DataFrame(data, columns=["account", "date", "name", "amount", "amount_currency", "price",
-                                             "price_currency"])
 
-        return df
+            t_tags = {k: True for k in t.tags}
+            t_props = t.properties
+            t_comments = ["\n".join(t.comments)]
+
+            for tt in t.transfers:
+                tt_tags = copy(t_tags)
+                tt_tags.update({k: True for k in tt.tags})
+
+                tt_props = copy(t_props)
+                tt_props.update(tt.properties)
+
+                tt_comments = copy(t_comments)
+                tt_comments.extend(["\n"] + ["\n".join(tt.comments)])
+
+                tags.append(tt_tags)
+                properties.append(tt_props)
+                comments.append(tt_comments)
+
+        # Transfer to dataframes
+        df = pandas.DataFrame(data, columns=["account", "date", "booking_date", "name", "amount", "amount_currency",
+                                             "price", "price_currency"])
+        df_tags = pandas.DataFrame(tags)
+        df_properties = pandas.DataFrame(properties)
+        df_comments = pandas.DataFrame(comments)
+
+        return df, df_tags, df_properties, df_comments
 
     def get_time_span(self):
         """

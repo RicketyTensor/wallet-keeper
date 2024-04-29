@@ -101,9 +101,9 @@ def get_transfers():
     global wallet
 
     # Get totals
-    df = wallet.get_pandas_transfers()
+    df, df_tags, df_properties, df_comments = wallet.get_pandas_transfers()
 
-    return df
+    return df, df_tags, df_properties, df_comments
 
 def get_time_span():
     global wallet
