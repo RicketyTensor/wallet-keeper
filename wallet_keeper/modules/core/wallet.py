@@ -2,6 +2,8 @@ import pandas
 from typing import List, Dict
 from wallet_keeper.modules.core.transaction import Transaction
 from copy import copy, deepcopy
+import datetime
+
 
 class Wallet(object):
     def __init__(self):
@@ -74,7 +76,7 @@ class Wallet(object):
 
         return df, df_tags, df_properties, df_comments
 
-    def get_time_span(self):
+    def get_time_span(self) -> (datetime.datetime, datetime.datetime):
         """
         Get time span of available data
 

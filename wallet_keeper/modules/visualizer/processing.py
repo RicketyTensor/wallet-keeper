@@ -101,7 +101,14 @@ def get_transfers():
     global wallet
 
     # Get totals
-    df, df_tags, df_properties, df_comments = wallet.get_pandas_transfers()
+    df, df_tags, df_properties, df_comments = wallet.get_pandas_transfers()#
+
+    # Enhance dataframe
+    df["date"] = pandas.to_datetime(df["date"])
+    df["year"] = df.date.dt.year
+    df["quarter"] = df.date.dt.quarter
+    df["month"] = df.date.dt.month
+    df["day"] = df.date.dt.day
 
     return df, df_tags, df_properties, df_comments
 
@@ -146,110 +153,4 @@ def assemble_dataframes():
 
     return dfn.groupby(["account", "currency", "depth"]).sum().reset_index()
 
-    # # Enhance dataframe
-    # df["date"] = pandas.to_datetime(df["date"])
-    # df["year"] = df.date.dt.year
-    # df["quarter"] = df.date.dt.quarter
-    # df["month"] = df.date.dt.month
-    # df["day"] = df.date.dt.day
-    #
-    # # Update accounts
-    # accounts = sorted(df["account"].unique())
-    #
-    # # Name properly
-    # df_transactions = df.copy()
-    #
-    # # Create dataframes for tags
-    # # ==========================
-    # file_tags = "tags.dat"
-    #
-    # global_tags = []
-    # with open(file_tags, "r") as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         global_tags.append(line.strip())
-    #
-    # global_tags.insert(0, "Comment")
-    #
-    # df = df_transactions.apply(extract_tags, axis=1, result_type="expand", args=([global_tags]))
-    # df.columns = global_tags
-    # df_tags = df.copy()
-    #
-    # prefixes = ["Assets", "Equity", "Expenses", "Income", "Liabilities"]
-    #
-    # # Prepare dataframe of budget
-    # # ===========================
-    # file_budget = "budget.ledger"
-    #
-    # budget = []
-    #
-    # with open(file_budget, "r") as f:
-    #     lines = f.readlines()
-    #     period = "monthly"
-    #     counter = 0
-    #     for line in lines:
-    #         # Decide period
-    #         if "~ Monthly" in line:
-    #             period = "m"
-    #             counter += 1
-    #         elif "~ Yearly" in line:
-    #             period = "y"
-    #             counter += 1
-    #         else:
-    #             if line.strip() in ["", "\n", "\r\n"]:
-    #                 continue
-    #
-    #             # Start a new transaction
-    #             if len(budget) < counter:
-    #                 budget.append({
-    #                     "account": [],
-    #                     "monthly": [],
-    #                     "yearly": [],
-    #                     "currency": []
-    #                 })
-    #             entry = budget[-1]
-    #             data = list(filter(None, line.strip().split(" ")))
-    #             entry["account"].append(data[0])
-    #             amount = None if len(data) < 2 else float(data[1])
-    #             entry["currency"].append(None if len(data) < 3 else data[2])
-    #             if period == "m":
-    #                 entry["monthly"].append(amount)
-    #                 entry["yearly"].append(0.0)
-    #             elif period == "y":
-    #                 entry["monthly"].append(0.0)
-    #                 entry["yearly"].append(amount)
-    #
-    # # Balance all transactions
-    # df = pandas.DataFrame()
-    # for entry in budget:
-    #     if entry["currency"].count(None) > 1:
-    #         raise ValueError("Non-balancing transaction in a budget")
-    #     elif entry["currency"].count(None) == 1:
-    #         i = entry["currency"].index(None)
-    #         m = [v for j, v in enumerate(entry["monthly"]) if j != i]
-    #         y = [v for j, v in enumerate(entry["yearly"]) if j != i]
-    #         entry["monthly"][i] = -sum(m)
-    #         entry["yearly"][i] = -sum(y)
-    #         entry["currency"][i] = entry["currency"][0]
-    #     df = pandas.concat([df, pandas.DataFrame(entry)])
-    #
-    # df_budget = df.groupby(["account", "currency"]).sum(numeric_only=True).reset_index()
-    #
-    # # Prepare dataframe for prices
-    # # ============================
-    # file_history = "price.db"
-    # df = pandas.read_csv(file_history, index_col=0, delimiter=",",
-    #                      names=["date", "to_currency", "from_amount", "from_currency"]
-    #                      ).reset_index()
-    #
-    # # Enhance dataframe
-    # df["date"] = pandas.to_datetime(df["date"])
-    # df["year"] = df.date.dt.year
-    # df["quarter"] = df.date.dt.quarter
-    # df["month"] = df.date.dt.month
-    # df["day"] = df.date.dt.day
-    #
-    # # Name properly
-    # df_prices = df.copy()
-    #
-    # pass
+
