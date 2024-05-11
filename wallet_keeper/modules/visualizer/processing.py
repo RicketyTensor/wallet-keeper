@@ -4,11 +4,18 @@ import re
 from pathlib import Path
 from wallet_keeper.modules.translator.factory_reader import factory as factory_reader
 from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
+from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedger
 from wallet_keeper.modules.core.wallet import Wallet
 
 # global variables
-wallet = Wallet()
+wallet = None
 
+def prepare(file: Path):
+    global wallet
+
+    # reader = factory_reader.create(ReaderMobusXML.format)
+    reader = factory_reader.create(ReaderLedger.format)
+    wallet = reader.read(file)
 
 # Establish account hierarchy
 def get_hierarchy(words, delim=":"):
@@ -91,17 +98,11 @@ def explode_accounts(df: pandas.DataFrame):
     return df_new
 
 
-def prepare(file: Path):
-    global wallet
-
-    reader = factory_reader.create(ReaderMobusXML.format)
-    wallet.build(reader.read(Path(file)))
-
-def get_transfers():
+def get_transfers(start_date=None, end_date=None, value="price"):
     global wallet
 
     # Get totals
-    df, df_tags, df_properties, df_comments = wallet.get_pandas_transfers()#
+    df, df_tags, df_properties, df_comments = wallet.get_pandas_transfers(start_date=start_date, end_date=end_date)
 
     # Enhance dataframe
     df["date"] = pandas.to_datetime(df["date"])
@@ -112,15 +113,23 @@ def get_transfers():
 
     return df, df_tags, df_properties, df_comments
 
+
 def get_time_span():
     global wallet
 
     return wallet.get_time_span()
 
+
 def get_accounts():
     global wallet
 
     return wallet.get_list_accounts()
+
+def get_account_category(acc):
+    global wallet
+
+    return wallet.get_account_category(acc)
+
 
 def get_account_totals():
     global wallet
@@ -152,5 +161,3 @@ def assemble_dataframes():
             dfn = pandas.concat([dfn, dfg])
 
     return dfn.groupby(["account", "currency", "depth"]).sum().reset_index()
-
-

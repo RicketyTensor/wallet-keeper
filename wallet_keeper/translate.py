@@ -1,18 +1,16 @@
 import argparse
 from pathlib import Path
-from typing import List, Dict
+from typing import List
 import os
 from modules.translator.translations import allowed_translations
 from modules.translator.factory_reader import factory as fr
 from modules.translator.factory_writer import factory as fw
-from modules.utils.collection import *
 import json
 import glob
-import pandas
 
 
 def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None,
-              tag: str = "") -> None:
+              tag: str = "") -> List[Path]:
     """
     Translate to ledger format
 
@@ -34,7 +32,7 @@ def translate(files: List[Path], reader_format: str, writer_format: str, rules: 
     writer = fw.create(writer_format)
     files = writer.write(transactions, rules, output, tag)
 
-    pass
+    return files
 
 
 if __name__ == "__main__":
@@ -62,4 +60,4 @@ if __name__ == "__main__":
         with open(args.guide, 'r') as f:
             guide = json.load(f)
 
-    translate(glob.glob(args.pattern), args.reader, args.writer, guide, Path(args.output))
+    files = translate(glob.glob(args.pattern), args.reader, args.writer, guide, Path(args.output))

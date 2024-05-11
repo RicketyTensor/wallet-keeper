@@ -1,12 +1,13 @@
 from typing import List, Dict
 from wallet_keeper.modules.translator.readers.base import ParserBase
-from wallet_keeper.modules.utils.collection import *
 import re
 from pathlib import Path
 from datetime import datetime
 from wallet_keeper.modules.core.transaction import Transaction
 from wallet_keeper.modules.core.transfer import Transfer
 from wallet_keeper.modules.core.dosh import Dosh
+import numpy
+from wallet_keeper.modules.core.wallet import Wallet
 
 
 class ReaderLedgerBuilder(object):
@@ -26,7 +27,7 @@ class ReaderLedger(ParserBase):
         pass
 
     @staticmethod
-    def _extract_comments(line):
+    def _extract_comments(line) -> (List[str], Dict[str, str], List[str]):
         """
         Extract comments, tags and labels from a line
 
@@ -63,7 +64,7 @@ class ReaderLedger(ParserBase):
         return labels, tags, comments
 
     @staticmethod
-    def _extract_transfer(line, i, path):
+    def _extract_transfer(line, i, path) -> (str, Dosh, Dosh, List[str], Dict[str, str], List[str]):
         """
         Extract transfer information from a line
 
@@ -96,29 +97,29 @@ class ReaderLedger(ParserBase):
             if fields[2] == "@":
                 price = Dosh(fields[0], fields[4]) * Dosh(fields[3], fields[4])
             elif fields[2] == "@@":
-                price = Dosh(fields[3], fields[4])
+                price = Dosh(numpy.sign(float(fields[0])), fields[4]) * Dosh(fields[3], fields[4])
             else:
-                raise ValueError(
-                    "Unknown price specification on the line {} of {}".format(i + 1, path))
+                raise ValueError("Unknown price specification on the line {} of {}".format(i + 1, path))
         else:
-            raise ValueError(
-                "Unknown transfer definition detected on the line {} of {}".format(i+1, path))
+            raise ValueError("Unknown transfer definition detected on the line {} of {}".format(i + 1, path))
 
         return account, amount, price, l, t, c
 
-    def _read(self, path: Path, **kwargs) -> List[Transaction]:
+    @staticmethod
+    def _read(path: Path, **kwargs) -> (List[Transaction], List[Dict]):
         """
         Translate input to an output
 
         :param path: file to translate
         :param output_file: file into which to write
         :param kwargs: reader specific arguments
-        :return: dictionary with information
+        :return: wallet instance
         """
         with open(path, "r") as f:
             lines = f.readlines()
 
         # Define variables
+        accounts = {}
         trans_date = None
         book_date = None
         name = None
@@ -133,7 +134,18 @@ class ReaderLedger(ParserBase):
         for i, line in enumerate(lines):
             if line.startswith("include"):
                 include_path = path.parent / line.split(" ")[1].strip()
-                transactions.extend(self._read(include_path), **kwargs)
+                tr, ac = ReaderLedger._read(include_path, **kwargs)
+                transactions.extend(tr)
+                accounts.update(ac)
+            elif line.startswith("account"):
+                s = line.replace("account", "").strip()
+                splits = s.split(";")
+                acc = splits[0].strip()
+                if len(splits) > 1:
+                    cat = splits[-1].strip().replace("#", "")
+                else:
+                    cat = None
+                accounts.update({acc: cat})
             else:
                 # Check for a date
                 pattern = "([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
@@ -149,10 +161,11 @@ class ReaderLedger(ParserBase):
                         opened = True
                     else:  # Finish an existing transaction
                         transactions.append(
-                            Transaction(trans_date, book_date, name,
-                                        labels, tags, comments,
-                                        transfers
-                                        )
+                            Transaction(
+                                trans_date, book_date, name,
+                                labels, tags, comments,
+                                transfers
+                            )
                         )
 
                         # Restart variables
@@ -174,11 +187,11 @@ class ReaderLedger(ParserBase):
                     else:
                         raise ValueError("Unknown date definition detected on the line {} of {}".format(i, path))
 
-                    name = line.split(" ")[1].strip()
+                    name = " ".join(line.split(" ")[1:])
 
                     continue  # skip to the next line
 
-            # Check for transaction wide tags and comments
+                # Check for transaction wide tags and comments
                 if line.strip().startswith(";"):
                     l, t, c = ReaderLedger._extract_comments(line)
                     if len(l) > 0:
@@ -191,7 +204,7 @@ class ReaderLedger(ParserBase):
                     # Process actual transfers
                     entry = line.strip()
                     if entry:
-                        account, amount, price, l, t, c = ReaderLedger._extract_transfer(entry,i, path)
+                        account, amount, price, l, t, c = ReaderLedger._extract_transfer(entry, i, path)
                         transfers.append(Transfer(account, amount, price, l, t, c))
 
         else:
@@ -204,9 +217,10 @@ class ReaderLedger(ParserBase):
                                 )
                 )
 
-        return transactions
+        return transactions, accounts
 
-    def read(self, path: Path, **kwargs) -> List[Transaction]:
+    @staticmethod
+    def read(path: Path, **kwargs) -> Wallet:
         """
         Translate input to an output
 
@@ -215,4 +229,6 @@ class ReaderLedger(ParserBase):
         :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
-        return self._read(path, **kwargs)
+        transactions, account_categories = ReaderLedger._read(path, **kwargs)
+
+        return Wallet(transactions, account_categories)

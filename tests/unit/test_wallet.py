@@ -2,13 +2,6 @@ import unittest
 import os
 from pathlib import Path
 from wallet_keeper.modules.translator.factory_reader import factory
-import pickle
-import pandas
-from wallet_keeper.modules.utils.collection import *
-from wallet_keeper.modules.utils.testing import assert_equal
-import json
-import filecmp
-import shutil
 from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
 from wallet_keeper.modules.core.wallet import Wallet
 from decimal import Decimal

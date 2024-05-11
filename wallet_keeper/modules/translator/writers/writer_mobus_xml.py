@@ -1,14 +1,9 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.writers.base import WriterBase
 from wallet_keeper.modules.core.transaction import Transaction
 from wallet_keeper.modules.core.transfer import Transfer
-from datetime import datetime
-import pandas
-import re
-import os
 import hashlib
 from wallet_keeper.modules.translator.common.mobus_naming import *
 

@@ -1,13 +1,8 @@
 from pathlib import Path
 from typing import List, Dict
-import xml.etree.ElementTree as ET
-from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.writers.base import WriterBase
-from wallet_keeper.modules.utils.collection import *
 from datetime import datetime
-import pandas
 import re
-import os
 
 
 class WriterLedgerBuilder(object):
@@ -39,10 +34,10 @@ class WriterLedger(WriterBase):
             value = data[k]
             if value is not None:
                 try:
-                    pattern = re.compile(r)
+                    pattern = re.compile(r.lower())
                 except re.error:
                     raise ValueError("Failed parsing regex pattern {}".format(r))
-                check &= bool(pattern.match(value))
+                check &= bool(pattern.match(value.lower()))
             else:
                 check = False
                 break
@@ -82,6 +77,8 @@ class WriterLedger(WriterBase):
 
                 pattern = rule[cs_price][cs_pattern]
                 matches = re.findall(pattern, message.lower())
+                if len(matches) < 1:
+                    raise ValueError("Pattern \"{}\" was not detected in the text \"{}\"".format(pattern, message))
                 match = matches[0].strip().replace(",", ".")
                 price_value = float(match)
                 price_currency = rule[cs_price][cs_name]

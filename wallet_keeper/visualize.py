@@ -28,7 +28,7 @@ if __name__ == '__main__':
             for page in dash.page_registry.values()
         ],
         className="navbar navbar-expand-lg",
-        dark=True,
+        dark=False,
         links_left=True,
         fluid=True
     )

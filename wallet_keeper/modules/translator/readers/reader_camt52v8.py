@@ -1,10 +1,8 @@
 from pathlib import Path
 from typing import List, Dict
 import xml.etree.ElementTree as ET
-from wallet_keeper.modules.utils.xml_util import get_namespace, get_value, get_attr, get_element
+from wallet_keeper.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.readers.base import ParserBase
-from wallet_keeper.modules.utils.collection import *
-import pandas
 
 
 class ReaderCAMT52v8Builder(object):

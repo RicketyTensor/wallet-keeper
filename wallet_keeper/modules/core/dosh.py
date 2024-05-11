@@ -3,7 +3,10 @@ import decimal
 
 class Dosh(object):
     def __init__(self, value: str = "0.0", currency: str = None):
-        self._value = decimal.Decimal(value)
+        try:
+            self._value = decimal.Decimal(value)
+        except decimal.InvalidOperation:
+            raise ValueError("Could not translate {} to a decimal format!".format(value))
         self._currency = currency
 
     @property
@@ -39,7 +42,15 @@ class Dosh(object):
 
     def __mul__(self, other):
         if isinstance(other, Dosh):
+            return self.__class__(str(self.value * other.value), self._currency)
+        elif isinstance(other, int):
+            return self.__class__(str(self.value * other), self._currency)
+        elif isinstance(other, decimal.Decimal):
+            return self.__class__(str(self.value * other), self._currency)
+        elif isinstance(other, float):
+            return self.__class__(str(self.value * decimal.Decimal(other)), self._currency)
+        else:
             if other.currency != self._currency:
                 raise ValueError(
                     "Cannot multiple two different currencies {} and {}".format(self.currency, other.currency))
-        return self.__class__(str(self.value * other.value), self._currency)
+

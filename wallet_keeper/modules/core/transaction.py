@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Dict, List
 from wallet_keeper.modules.core.dosh import Dosh
 from wallet_keeper.modules.core.transfer import Transfer
+import numpy
 
 
 class Transaction(object):

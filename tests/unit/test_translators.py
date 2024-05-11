@@ -8,10 +8,6 @@ from wallet_keeper.modules.translator.readers.reader_camt52v8 import ReaderCAMT5
 from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
 from wallet_keeper.modules.translator.writers.writer_mobus_xml import WriterMobusXML
 from wallet_keeper.modules.translator.writers.writer_ledger import WriterLedger
-from wallet_keeper.modules.utils.collection import *
-import pickle
-import json
-import pandas
 import filecmp
 import shutil
 

@@ -3,10 +3,12 @@ from dash import dcc, html, Input, Output, callback, dash_table
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-import datetime
 import pandas
 from wallet_keeper.modules.visualizer import processing
 import re
+import calendar
+from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
 
 dash.register_page(__name__, order=2, name="Transfer history")
 
@@ -61,12 +63,18 @@ graph_history = html.Div([
     Input("filter_prop_name", "value"),
     Input("filter_prop_value", "value"),
     Input("transaction_account_selector_dropdown", "value"),
+    Input("select_month_range_start", "value"),
+    Input("select_month_range_end", "value"),
 )
-def filter_transactions(tag, reg, selected):
+def filter_transactions(tag, reg, selected, month_start, month_end):
     if not selected:
         return {}, {}
 
-    df, df_tags, df_properties, df_comments = processing.get_transfers()
+    # Apply accounting range
+    dmin = datetime.strptime(month_start, "%m/%Y")
+    dmax = datetime.strptime(month_end, "%m/%Y") + relativedelta(months=1) - timedelta(days=1)
+
+    df, df_tags, df_properties, df_comments = processing.get_transfers(start_date=dmin, end_date=dmax)
 
     # Mask for account selection
     mask = df.account.isin(selected) if isinstance(selected, list) else df.account.isin([selected])
@@ -147,10 +155,16 @@ def display_click_data(click_data, fig, filtered_transactions, filtered_properti
     Input("cumsum_switch", "value"),
     Input("filtered_transactions", "data"),
     Input("filtered_properties", "data"),
+    Input("select_month_range_start", "value"),
+    Input("select_month_range_end", "value"),
 )
-def make_graph_history(cs, filtered_transactions, filtered_properties):
+def make_graph_history(cs, filtered_transactions, filtered_properties, month_start, month_end):
     if not filtered_transactions:
         return go.Figure()
+
+    # Apply accounting range
+    dmin = datetime.strptime(month_start, "%m/%Y")
+    dmax = datetime.strptime(month_end, "%m/%Y") + relativedelta(months=1) - timedelta(days=1)
 
     # Generate dataframe
     df = pandas.DataFrame(filtered_transactions)
@@ -186,9 +200,8 @@ def make_graph_history(cs, filtered_transactions, filtered_properties):
             )
         )
 
-    t0, t1 = processing.get_time_span()
-    fig.update_xaxes(range=[t0 - datetime.timedelta(days=30),
-                            t1 + datetime.timedelta(days=30)])
+    fig.update_xaxes(range=[dmin - timedelta(days=30),
+                            dmax + timedelta(days=30)])
     fig.update_layout(title="Daily transfers")
     fig.update_xaxes(title_text="Year")
     fig.update_yaxes(title_text=y.capitalize())
@@ -198,11 +211,17 @@ def make_graph_history(cs, filtered_transactions, filtered_properties):
 
 @callback(
     Output("bar_monthly_graph", "figure"),
-    Input("filtered_transactions", "data")
+    Input("filtered_transactions", "data"),
+    Input("select_month_range_start", "value"),
+    Input("select_month_range_end", "value"),
 )
-def make_graph_monthly(filtered_transactions):
+def make_graph_monthly(filtered_transactions, month_start, month_end):
     if not filtered_transactions:
         return go.Figure()
+
+    # Apply accounting range
+    dmin = datetime.strptime(month_start, "%m/%Y")
+    dmax = datetime.strptime(month_end, "%m/%Y") + relativedelta(months=1) - timedelta(days=1)
 
     # Generate dataframe
     df = pandas.DataFrame(filtered_transactions)
@@ -228,9 +247,8 @@ def make_graph_monthly(filtered_transactions):
         )
     )
 
-    t0, t1 = processing.get_time_span()
-    fig.update_xaxes(range=[t0 - datetime.timedelta(days=30),
-                            t1 + datetime.timedelta(days=30)])
+    fig.update_xaxes(range=[dmin - timedelta(days=30),
+                            dmax + timedelta(days=30)])
     fig.update_layout(title="Monthly delta")
     fig.update_xaxes(title_text="Month", row=1, col=1)
     fig.update_yaxes(title_text="Total", row=1, col=1)
@@ -239,11 +257,17 @@ def make_graph_monthly(filtered_transactions):
 
 @callback(
     Output("bar_yearly_graph", "figure"),
-    Input("filtered_transactions", "data")
+    Input("filtered_transactions", "data"),
+    Input("select_month_range_start", "value"),
+    Input("select_month_range_end", "value"),
 )
-def make_graph_yearly(filtered_transactions):
+def make_graph_yearly(filtered_transactions, month_start, month_end):
     if not filtered_transactions:
         return go.Figure()
+
+    # Apply accounting range
+    dmin = datetime.strptime(month_start, "%m/%Y")
+    dmax = datetime.strptime(month_end, "%m/%Y") + relativedelta(months=1) - timedelta(days=1)
 
     # Generate dataframe
     df = pandas.DataFrame(filtered_transactions)
@@ -267,11 +291,32 @@ def make_graph_yearly(filtered_transactions):
         )
     )
 
-    t0, t1 = processing.get_time_span()
     fig.update_layout(title="Yearly totals")
     fig.update_xaxes(title_text="Year", row=1, col=1)
     fig.update_yaxes(title_text="Total", row=1, col=1)
     return fig
+
+
+def make_month_selector():
+    t0, t1 = processing.get_time_span()
+    month_list = [i.strftime("%m/%Y") for i in pandas.date_range(start=t0, end=t1, freq='SMS', inclusive="both")]
+
+    selector = dbc.Row(children=[
+        dcc.Dropdown(
+            month_list, month_list[0],
+            id="select_month_range_start",
+            placeholder="Start MM/YYYY",
+            clearable=False
+        ),
+        dcc.Dropdown(
+            month_list, month_list[-1],
+            id="select_month_range_end",
+            placeholder="End MM/YYYY",
+            clearable=False
+        )
+    ])
+
+    return html.Div([html.H5("Select date range:"), selector])
 
 
 layout = dbc.Container(children=[
@@ -279,9 +324,11 @@ layout = dbc.Container(children=[
     dcc.Store(id="filtered_properties"),
     dbc.Row(children=[
         # Account selector
-        dbc.Col(children=[make_account_selector(),
-                          make_properties_filter()
-                          ], width={"size": 2}),
+        dbc.Col(children=[
+            make_account_selector(),
+            make_month_selector(),
+            make_properties_filter()
+        ], width={"size": 2}),
         # Accounting
         dbc.Col(children=[
             html.H4("Plots"),

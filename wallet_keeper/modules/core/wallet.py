@@ -6,13 +6,9 @@ import datetime
 
 
 class Wallet(object):
-    def __init__(self):
-        self.transactions = None
-        self.accounts = None
-
-    def build(self, transactions: List[Transaction]):
+    def __init__(self, transactions: List[Transaction], account: Dict[str, str]):
         self.transactions = transactions
-        self.accounts = self._extract_accounts()
+        self.account_categories = account
 
     def _extract_accounts(self):
         """
@@ -26,26 +22,47 @@ class Wallet(object):
 
         return sorted(list(set(accounts)))
 
-    def get_list_accounts(self):
+    def get_list_accounts(self) -> List[str]:
         """
         Get list of accounts
 
         :return:
         """
-        return self.accounts
+        return list(self.account_categories.keys())
 
-    def get_pandas_transfers(self):
+    def get_account_category(self, acc: str) -> str:
         """
-        Get DataFrame of transfers
+        Get category of an account
 
         :return:
         """
+        return self.account_categories[acc]
+
+    def get_pandas_transfers(self, start_date=None, end_date=None):
+        """
+        Get DataFrame of transfers
+
+        :param start_date: first day from which transfers should be considered
+        :param end_date: last day up to which transfers should be considered
+        :return: DataFrames with transfers, tags, properties and comments
+        """
+
         data = []
         tags = []
         properties = []
         comments = []
         for t in self.transactions:
-            data.extend([(tt.account, t.trans_date, t.book_date, t.name,
+            # Change if in range
+            if start_date:
+                if start_date > t.trans_date:
+                    continue
+
+            if end_date:
+                if t.trans_date > end_date:
+                    continue
+
+            # Add transfers
+            data.extend([(tt.account, self.account_categories[tt.account], t.trans_date, t.book_date, t.name,
                           tt.amount.value, tt.amount.currency,
                           tt.price.value, tt.price.currency) for tt in t.transfers])
 
@@ -68,7 +85,8 @@ class Wallet(object):
                 comments.append(tt_comments)
 
         # Transfer to dataframes
-        df = pandas.DataFrame(data, columns=["account", "date", "booking_date", "name", "amount", "amount_currency",
+        df = pandas.DataFrame(data, columns=["account", "category", "date", "booking_date", "name", "amount",
+                                             "amount_currency",
                                              "price", "price_currency"])
         df_tags = pandas.DataFrame(tags)
         df_properties = pandas.DataFrame(properties)
