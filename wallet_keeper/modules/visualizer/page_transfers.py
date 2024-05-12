@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas
 from wallet_keeper.modules.visualizer import processing
+from wallet_keeper.modules.visualizer.common import make_month_selector
 import re
 import calendar
 from dateutil.relativedelta import relativedelta
@@ -295,29 +296,6 @@ def make_graph_yearly(filtered_transactions, month_start, month_end):
     fig.update_xaxes(title_text="Year", row=1, col=1)
     fig.update_yaxes(title_text="Total", row=1, col=1)
     return fig
-
-
-def make_month_selector():
-    t0, t1 = processing.get_time_span()
-    month_list = [i.strftime("%m/%Y") for i in pandas.date_range(start=t0, end=t1, freq='SMS', inclusive="both")]
-
-    selector = dbc.Row(children=[
-        dcc.Dropdown(
-            month_list, month_list[0],
-            id="select_month_range_start",
-            placeholder="Start MM/YYYY",
-            clearable=False
-        ),
-        dcc.Dropdown(
-            month_list, month_list[-1],
-            id="select_month_range_end",
-            placeholder="End MM/YYYY",
-            clearable=False
-        )
-    ])
-
-    return html.Div([html.H5("Select date range:"), selector])
-
 
 layout = dbc.Container(children=[
     dcc.Store(id="filtered_transactions"),

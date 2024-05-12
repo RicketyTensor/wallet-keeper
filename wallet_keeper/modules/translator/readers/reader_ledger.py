@@ -1,3 +1,4 @@
+import decimal
 from typing import List, Dict
 from wallet_keeper.modules.translator.readers.base import ParserBase
 import re
@@ -106,7 +107,7 @@ class ReaderLedger(ParserBase):
         return account, amount, price, l, t, c
 
     @staticmethod
-    def _read(path: Path, **kwargs) -> (List[Transaction], List[Dict]):
+    def _read(path: Path, **kwargs) -> (List[Transaction], Dict[str, str], Transaction, Transaction):
         """
         Translate input to an output
 
@@ -119,7 +120,10 @@ class ReaderLedger(ParserBase):
             lines = f.readlines()
 
         # Define variables
-        accounts = {}
+        account_labels = {}
+        budget_monthly = None
+        budget_yearly = None
+        budg_factor = 1
         trans_date = None
         book_date = None
         name = None
@@ -130,13 +134,17 @@ class ReaderLedger(ParserBase):
 
         # Go over lines
         transactions = []
-        opened = False
+        tran_opened = False
+        budg_m_opened = False
+        budg_y_opened = False
         for i, line in enumerate(lines):
             if line.startswith("include"):
                 include_path = path.parent / line.split(" ")[1].strip()
-                tr, ac = ReaderLedger._read(include_path, **kwargs)
+                tr, al, bm, by = ReaderLedger._read(include_path, **kwargs)
                 transactions.extend(tr)
-                accounts.update(ac)
+                account_labels.update(al)
+                budget_monthly = bm if bm else budget_monthly
+                budget_yearly = by if by else budget_yearly
             elif line.startswith("account"):
                 s = line.replace("account", "").strip()
                 splits = s.split(";")
@@ -145,21 +153,23 @@ class ReaderLedger(ParserBase):
                     cat = splits[-1].strip().replace("#", "")
                 else:
                     cat = None
-                accounts.update({acc: cat})
+                account_labels.update({acc: cat})
+            elif line.startswith("~ Monthly"):
+                budg_m_opened = True
+                budg_y_opened = False
+            elif line.startswith("~ Yearly"):
+                budg_m_opened = False
+                budg_y_opened = True
             else:
                 # Check for a date
                 pattern = "([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
                 match = re.findall(pattern, line)
-                if len(match) == 0 and not opened:  # skip initial lines of a file till a transaction is detected
-                    continue
 
-                # First line of a transaction
-                # ---------------------------
-                elif len(match) > 0:
-                    # Check if a transaction is ready to be closed
-                    if not opened:  # Start the first transaction
-                        opened = True
-                    else:  # Finish an existing transaction
+                if len(match) == 0 and not (tran_opened or budg_m_opened or budg_y_opened):  # skip initial lines of a file till a transaction is detected
+                    continue
+                elif not line.strip():
+                    if tran_opened:
+                        tran_opened = False
                         transactions.append(
                             Transaction(
                                 trans_date, book_date, name,
@@ -167,15 +177,39 @@ class ReaderLedger(ParserBase):
                                 transfers
                             )
                         )
+                    elif budg_m_opened:
+                        budg_m_opened = False
+                        budget_monthly = Transaction(
+                            trans_date, book_date, name,
+                            labels, tags, comments,
+                            transfers
+                        )
+                    elif budg_y_opened:
+                        budg_y_opened = False
+                        budget_yearly = Transaction(
+                            trans_date, book_date, name,
+                            labels, tags, comments,
+                            transfers
+                        )
 
-                        # Restart variables
-                        trans_date = None
-                        book_date = None
-                        name = None
-                        labels = []
-                        tags = {}
-                        comments = []
-                        transfers = []
+                    # Restart variables
+                    trans_date = None
+                    book_date = None
+                    name = None
+                    labels = []
+                    tags = {}
+                    comments = []
+                    transfers = []
+
+                # First line of a transaction
+                # ---------------------------
+                elif len(match) > 0:
+                    budg_m_opened = False
+                    budg_y_opened = False
+
+                    # Check if a transaction is ready to be closed
+                    if not tran_opened:  # Start the first transaction
+                        tran_opened = True
 
                     # Read dates
                     if len(match) == 1:
@@ -208,16 +242,28 @@ class ReaderLedger(ParserBase):
                         transfers.append(Transfer(account, amount, price, l, t, c))
 
         else:
-            if opened:
-                # Close last open transaction
+            if tran_opened:
                 transactions.append(
-                    Transaction(trans_date, book_date, name,
-                                labels, tags, comments,
-                                transfers
-                                )
+                    Transaction(
+                        trans_date, book_date, name,
+                        labels, tags, comments,
+                        transfers
+                    )
+                )
+            elif budg_m_opened:
+                budget_monthly = Transaction(
+                    trans_date, book_date, name,
+                    labels, tags, comments,
+                    transfers
+                )
+            elif budg_y_opened:
+                budget_yearly = Transaction(
+                    trans_date, book_date, name,
+                    labels, tags, comments,
+                    transfers
                 )
 
-        return transactions, accounts
+        return transactions, account_labels, budget_monthly, budget_yearly
 
     @staticmethod
     def read(path: Path, **kwargs) -> Wallet:
@@ -229,6 +275,6 @@ class ReaderLedger(ParserBase):
         :param kwargs: reader specific arguments
         :return: dictionary with data as lists
         """
-        transactions, account_categories = ReaderLedger._read(path, **kwargs)
+        transactions, account_labels, budget_monthly, budget_yearly = ReaderLedger._read(path, **kwargs)
 
-        return Wallet(transactions, account_categories)
+        return Wallet(transactions, account_labels, budget_monthly, budget_yearly)

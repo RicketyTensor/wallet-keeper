@@ -6,6 +6,7 @@ from wallet_keeper.modules.translator.factory_reader import factory as factory_r
 from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedger
 from wallet_keeper.modules.core.wallet import Wallet
+import calendar
 
 # global variables
 wallet = None
@@ -98,7 +99,7 @@ def explode_accounts(df: pandas.DataFrame):
     return df_new
 
 
-def get_transfers(start_date=None, end_date=None, value="price"):
+def get_transfers(start_date=None, end_date=None):
     global wallet
 
     # Get totals
@@ -113,6 +114,14 @@ def get_transfers(start_date=None, end_date=None, value="price"):
 
     return df, df_tags, df_properties, df_comments
 
+def get_budgets():
+    global wallet
+
+    # Get frame
+    dfm, dfy = wallet.get_pandas_budgets()
+
+    return dfm, dfy
+
 
 def get_time_span():
     global wallet
@@ -125,19 +134,30 @@ def get_accounts():
 
     return wallet.get_list_accounts()
 
+def get_accounts_w_budget():
+    global wallet
+
+    return sorted(wallet.get_list_accounts_w_budget())
+
 def get_account_category(acc):
     global wallet
 
-    return wallet.get_account_category(acc)
+    return wallet.get_account_label(acc)
 
 
-def get_account_totals():
+def get_account_totals(start_date=None, end_date=None, hierarchy=False):
     global wallet
 
     # Get totals
-    df = wallet.get_pandas_totals(value="price", hierarchy=True)
+    df = wallet.get_pandas_totals(value="price", start_date=start_date, end_date=end_date, hierarchy=hierarchy)
 
     return df
+
+def get_first_and_last_day(t0, t1):
+    d0 = t0.replace(day=1)
+    r1 = calendar.monthrange(t1.year, t1.month)
+    d1 = t1.replace(day=r1[1])
+    return d0, d1
 
 
 # Prepare dataframe of transactions

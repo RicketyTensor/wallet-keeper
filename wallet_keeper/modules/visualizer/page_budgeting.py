@@ -8,13 +8,14 @@ import calendar
 from dateutil.relativedelta import relativedelta
 import pandas
 from wallet_keeper.modules.visualizer import processing
+from wallet_keeper.modules.visualizer.common import make_month_selector
 from decimal import Decimal
 
 dash.register_page(__name__, order=4, name="Budgeting")
 
 
 def make_account_selector(identifier):
-    accounts = processing.get_accounts()
+    accounts = processing.get_accounts_w_budget()
     table = dash_table.DataTable(
         id=identifier,
         columns=[
@@ -44,47 +45,6 @@ def make_account_selector(identifier):
                      "overflowY": "auto"},
     )
     return table
-
-
-# Range slider for accounting
-def get_first_and_last_day(t0, t1):
-    d0 = t0.replace(day=1)
-    r1 = calendar.monthrange(t1.year, t1.month)
-    d1 = t1.replace(day=r1[1])
-    return d0, d1
-
-
-def make_month_selector():
-    t0, t1 = processing.get_time_span()
-    month_list = [i.strftime("%m/%Y") for i in pandas.date_range(start=t0, end=t1, freq='SMS', inclusive="both")]
-
-    selector = dbc.Row(children=[
-        dcc.Dropdown(
-            month_list, month_list[0],
-            id="select_month_range_start",
-            placeholder="Start MM/YYYY",
-            clearable=False,
-            persistence=True,
-        ),
-        dcc.Dropdown(
-            month_list, month_list[-1],
-            id="select_month_range_end",
-            placeholder="End MM/YYYY",
-            clearable=False,
-            persistence=True,
-        )
-    ])
-
-    return html.Div([html.H5("Select date range:"), selector])
-
-
-# Range slider for accounting
-def get_first_and_last_day(t0, t1):
-    d0 = t0.replace(day=1)
-    r1 = calendar.monthrange(t1.year, t1.month)
-    d1 = t1.replace(day=r1[1])
-    return d0, d1
-
 
 # Layout
 # ======
@@ -123,8 +83,12 @@ def filter_dataframe_monthly(plus, month_start, month_end):
     dmax = datetime.strptime(month_end, "%m/%Y") + relativedelta(months=1) - timedelta(days=1)
 
     # Prepare dataframe
-    accounts = processing.get_accounts()
-    df, df_tags, df_properties, df_comments = processing.get_transfers(start_date=dmin, end_date=dmax, value="price")
+    accounts = processing.get_accounts_w_budget()
+    df, df_tags, df_properties, df_comments = processing.get_transfers(start_date=dmin, end_date=dmax)
+    dfb_monthly, dfb_yearly = processing.get_budgets()
+    dfb_monthly = dfb_monthly[["account", "price"]].rename(columns={"price": "monthly"})
+    dfb_yearly = dfb_yearly[["account", "price"]].rename(columns={"price": "yearly"})
+    dfb = pandas.merge(dfb_monthly, dfb_yearly, on="account", how="outer").fillna(0.0)
 
     # Apply selection
     if plus:
@@ -148,6 +112,18 @@ def filter_dataframe_monthly(plus, month_start, month_end):
         })
         dfm["account"] = acc
         dfm["total"] = Decimal(0.0)
+
+        # Add budget
+        dfm["budget"] = Decimal(dfb.loc[dfb["account"] == acc, "monthly"].values[0])
+        r = Decimal(0.0)
+        for i, row in dfm.iterrows():
+            if i == 0:
+                r = Decimal(dfb.loc[dfb["account"] == acc, "yearly"].values[0]) / 12
+            elif row["date"].month == 1:
+                r = Decimal(dfb.loc[dfb["account"] == acc, "yearly"].values[0]) / 12
+            dfm.loc[i, "budget"] += r
+
+        # Assign existing values
         mask_r = df["account"] == acc
         mask_l = dfm["date"].isin(df[mask_r]["date"])
         dfm.loc[mask_l, "total"] = df.loc[mask_r, "total"].values
@@ -178,6 +154,14 @@ def display_history(analytics_monthly, month_start, month_end):
     # Generate figure
     fig = px.bar(dfm, x="date", y="total", color="account")
 
+    # Add budget
+    df = dfm.groupby(["date"]).sum().reset_index()
+    fig.add_trace(go.Scatter(
+        x=df["date"],
+        y=df["budget"],
+        name="Budget"
+    ))
+
     fig.update_xaxes(range=[dmin - timedelta(days=30),
                             dmax + timedelta(days=30)])
     fig.update_xaxes(title_text="Month")
@@ -207,6 +191,15 @@ def display_cumulative(analytics_monthly, month_start, month_end):
 
     # Generate figure
     fig = px.area(dfm, x="date", y="total", color="account")
+
+    # Add budget
+    df = dfm.groupby(["date"]).sum().reset_index()
+    df["budget"] = df["budget"].cumsum()
+    fig.add_trace(go.Scatter(
+        x=df["date"],
+        y=df["budget"],
+        name="Budget"
+    ))
 
     fig.update_xaxes(range=[dmin - timedelta(days=30),
                             dmax + timedelta(days=30)])
