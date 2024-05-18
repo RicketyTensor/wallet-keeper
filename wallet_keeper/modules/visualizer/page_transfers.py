@@ -232,7 +232,7 @@ def make_graph_monthly(filtered_transactions, month_start, month_end):
 
     # Collapse to months
     df = df.groupby(["year", "month", "account"]).agg(
-        total=pandas.NamedAgg(column="amount", aggfunc="sum")
+        total=pandas.NamedAgg(column="price", aggfunc="sum")
     ).reset_index()
     df["date"] = df['year'].astype(str) + "-" + df['month'].astype(str)
     df["date"] = pandas.to_datetime(df["date"])
@@ -277,7 +277,7 @@ def make_graph_yearly(filtered_transactions, month_start, month_end):
 
     # Collapse to years
     df = df.groupby(["year", "account"]).agg(
-        total=pandas.NamedAgg(column="amount", aggfunc="sum")
+        total=pandas.NamedAgg(column="price", aggfunc="sum")
     ).reset_index()
     df["date"] = df["year"]
 

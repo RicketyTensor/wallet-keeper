@@ -3,7 +3,7 @@ from typing import List, Dict
 import xml.etree.ElementTree as ET
 from wallet_keeper.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.readers.base import ParserBase
-
+from wallet_keeper.utils.collection import *
 
 class ReaderCAMT52v8Builder(object):
     def __init__(self):

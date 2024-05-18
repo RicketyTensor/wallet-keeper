@@ -3,7 +3,7 @@ from typing import List, Dict
 from wallet_keeper.modules.translator.writers.base import WriterBase
 from datetime import datetime
 import re
-
+from wallet_keeper.utils.collection import *
 
 class WriterLedgerBuilder(object):
     def __init__(self):
