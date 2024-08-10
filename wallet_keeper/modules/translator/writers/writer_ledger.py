@@ -119,15 +119,19 @@ class WriterLedger(WriterBase):
                 lines.append("{:4}{} {}\n".format("", ";", "{}: {}".format(tag, text)))
 
         # Write FROM account
-        lines.append("{:4}{:50}\n".format("", rule[cs_from]))
+        lines.append("{:4}{:50}{:10} {}\n".format("", rule[cs_from], -value, currency))
 
         # Add TO account
-        if commodity_amount:
-            lines.append(
-                "{:4}{:50}{:10.4f} {} @ {:.4f} {}\n".format("", rule[cs_to], commodity_amount, commodity_name,
-                                                            price_value, price_currency))
-        else:
-            lines.append("{:4}{:50}{:10} {}\n".format("", rule[cs_to], value, currency))
+        if type(rule[cs_to]) != list:
+            rule[cs_to] = [rule[cs_to]]
+
+        for to in rule[cs_to]:
+            if commodity_amount:
+                lines.append(
+                    "{:4}{:50}{:10.4f} {} @ {:.4f} {}\n".format("", to, commodity_amount, commodity_name,
+                                                                price_value, price_currency))
+            else:
+                lines.append("{:4}{}\n".format("", to))
         lines.append("\n")  # add an empty line
 
         return lines
