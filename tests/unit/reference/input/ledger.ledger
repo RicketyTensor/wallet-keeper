@@ -1,0 +1,16 @@
+2021-10-01 Rent
+    ; Location: Dumpster Nr. 6
+    Assets:Checking                                   
+    Expenses:Rent               333.33 EUR
+
+2021-10-01 Buying beers
+    ; Had to buy extra beers
+    Assets:Checking                                   
+    Expenses:Groceries            31.6 EUR ; Item: snacks
+    Expenses:Alcohol              21.0 EUR
+
+2021-10-01=2021-10-03 Life Insurance
+    ; #Insurance
+    Assets:Checking                                   
+    Expenses:Insurance:Life       190.0 EUR
+
