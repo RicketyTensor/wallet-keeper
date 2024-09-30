@@ -4,6 +4,11 @@ import xml.etree.ElementTree as ET
 from wallet_keeper.utils.xml_util import get_namespace, get_value, get_attr, get_element
 from wallet_keeper.modules.translator.readers.base import ParserBase
 from wallet_keeper.utils.collection import *
+from wallet_keeper.modules.core.transaction import Transaction
+from wallet_keeper.modules.core.transfer import Transfer
+from wallet_keeper.modules.core.dosh import Dosh
+from wallet_keeper.modules.core.wallet import Wallet
+import numpy
 
 class ReaderCAMT52v8Builder(object):
     def __init__(self):
@@ -79,7 +84,9 @@ class ReaderCAMT52v8(ParserBase):
                 cs_currency: currency,
                 cs_message: message
             }
-            transactions.append(data)
+
+            transactions.append(data
+            )
 
         return transactions
 

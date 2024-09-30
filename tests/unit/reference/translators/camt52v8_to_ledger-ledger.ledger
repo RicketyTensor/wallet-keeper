@@ -1,12 +1,12 @@
 2021-10-01 Rent
-    Assets:Checking                                   
-    Expenses:Rent                                         333.33 EUR
+    Assets:Checking                                      -333.33 EUR
+    Expenses:Rent
 
 2021-10-01 Extra Dental Insurance
-    Assets:Checking                                   
-    Expenses:Insurance:Dental                               31.6 EUR
+    Assets:Checking                                        -31.6 EUR
+    Expenses:Insurance:Dental
 
 2021-10-01=2021-10-01 Life Insurance
-    Assets:Checking                                   
-    Expenses:Insurance:Life                                190.0 EUR
+    Assets:Checking                                       -190.0 EUR
+    Expenses:Insurance:Life
 

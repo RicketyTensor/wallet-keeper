@@ -7,8 +7,8 @@ from datetime import datetime
 from wallet_keeper.modules.core.transaction import Transaction
 from wallet_keeper.modules.core.transfer import Transfer
 from wallet_keeper.modules.core.dosh import Dosh
-import numpy
 from wallet_keeper.modules.core.wallet import Wallet
+import numpy
 
 
 class ReaderLedgerBuilder(object):
