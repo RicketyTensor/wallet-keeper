@@ -4,13 +4,13 @@
 
 2021-11-15=2021-11-15 value date: 2021-11-15 00:00:00
     ; account: IBAN111100001111
-    ; institution: Spasskasse
-    ; status: BOOK
-    ; information: FOLGELASTSCHRIFT
-    ; name: Oompa Loompa
     ; amount: 111.11
     ; currency: EUR
+    ; information: FOLGELASTSCHRIFT
+    ; institution: Spasskasse
     ; message: Buying stuff I don't need.
+    ; name: Oompa Loompa
+    ; status: BOOK
     ; additional
     ; creditor
     ; creditor

@@ -236,7 +236,8 @@ class ReaderLedger(ParserBase):
                     if len(c) > 0:
                         comments.extend(c)
                 else:
-                    # Process actual transfers
+                    # Process transfers
+                    # -----------------
                     entry = line.strip()
                     if entry:
                         account, amount, price, l, t, c = ReaderLedger._extract_transfer(entry, i, path)

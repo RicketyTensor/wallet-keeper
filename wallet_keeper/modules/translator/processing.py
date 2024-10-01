@@ -2,7 +2,6 @@ from wallet_keeper.modules.core.wallet import Wallet
 from wallet_keeper.modules.core.transaction import Transaction
 from wallet_keeper.modules.core.transfer import Transfer
 from wallet_keeper.modules.core.dosh import Dosh
-from wallet_keeper.modules.translator.common.mobus_naming import cs_properties
 from wallet_keeper.utils.collection import *
 from typing import List, Dict
 from datetime import datetime
@@ -86,7 +85,7 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
             match = matches[0].strip().replace(",", ".")
             price_value = match
             price_currency = rule[cs_price][cs_name]
-            price = Dosh(price_value, price_currency)
+            price = Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency)
 
     # Add tags
     if cs_tag in rule.keys():
@@ -95,8 +94,8 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
         labels = []
 
     # Add properties
-    if cs_properties in rule.keys():
-        properties.update(rule[cs_properties])
+    if cs_prop in rule.keys():
+        properties.update(rule[cs_prop])
 
     # Add requested fields
     if cs_fields in rule.keys():

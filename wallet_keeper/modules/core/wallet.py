@@ -88,7 +88,7 @@ class Wallet(object):
 
             for tt in t.transfers:
                 tt_tags = copy(t_tags)
-                tt_tags.update({k: True for k in tt.tags})
+                tt_tags.update({k: True for k in tt.labels})
 
                 tt_props = copy(t_props)
                 tt_props.update(tt.properties)

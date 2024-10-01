@@ -4,15 +4,15 @@
 
 2021-11-15=2021-11-15 Raw
     ; account: IBAN111100001111
+    ; additional information: FOLGELASTSCHRIFT
+    ; amount: 111.11
+    ; creditor account: IBAN123400001234
+    ; creditor name: Dolmen
+    ; currency: EUR
+    ; debtor account: IBAN111100001111
+    ; debtor name: Oompa Loompa
     ; institution: Spasskasse
+    ; message: Buying stuff I don't need.
     ; status: BOOK
     ; value date: 2021-11-15 00:00:00
-    ; additional information: FOLGELASTSCHRIFT
-    ; creditor name: Dolmen
-    ; creditor account: IBAN123400001234
-    ; debtor name: Oompa Loompa
-    ; debtor account: IBAN111100001111
-    ; amount: 111.11
-    ; currency: EUR
-    ; message: Buying stuff I don't need.
 

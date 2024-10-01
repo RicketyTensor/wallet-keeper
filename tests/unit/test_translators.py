@@ -2,7 +2,6 @@ import unittest
 import os
 from pathlib import Path
 
-from wallet_keeper.modules.translator.common.mobus_naming import cs_properties
 from wallet_keeper.modules.translator.factory_reader import factory as fr
 from wallet_keeper.modules.translator.factory_writer import factory as fw
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedger
@@ -29,18 +28,18 @@ class TestParser(unittest.TestCase):
                 cs_rule: {cs_creditor_name: ".*Krakenversicherung.*"},
                 cs_from: "Assets:Checking",
                 cs_to: "Expenses:Insurance:Dental",
-                cs_properties: {
-                    cs_category: "special",
-                    cs_class: "optional"
+                cs_prop: {
+                    cs_prop_category: "special",
+                    cs_prop_class: "optional"
                 }
             },
             "Life Insurance": {
                 cs_rule: {cs_creditor_name: ".*Life Insurance.*"},
                 cs_from: "Assets:Checking",
                 cs_to: "Expenses:Insurance:Life",
-                cs_properties: {
-                    cs_category: "special",
-                    cs_class: "optional"
+                cs_prop: {
+                    cs_prop_category: "special",
+                    cs_prop_class: "optional"
                 }
             },
             "Rent": {
@@ -55,9 +54,9 @@ class TestParser(unittest.TestCase):
                     "Expenses:Groceries",
                     "Expenses:Alcohol"
                 ],
-                cs_properties: {
-                    cs_category: "common",
-                    cs_shop: "Aldi"
+                cs_prop: {
+                    cs_prop_category: "common",
+                    cs_prop_shop: "Aldi"
                 }
             },
             "Buying Commodities": {
@@ -67,10 +66,10 @@ class TestParser(unittest.TestCase):
                 },
                 cs_from: "Assets:Checking",
                 cs_to: "Equity:Securities:Fonds",
-                cs_properties: {
-                    cs_fond: "Big Bollocks",
-                    cs_isin: "DEPP123456",
-                    cs_category: "special"
+                cs_prop: {
+                    cs_prop_fond: "Big Bollocks",
+                    cs_prop_isin: "DEPP123456",
+                    cs_prop_category: "special"
                 },
                 "commodity": {
                     "pattern": "ck *([0-9],[0-9][0-9][0-9][0-9])",

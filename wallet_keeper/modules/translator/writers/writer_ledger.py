@@ -37,7 +37,7 @@ class WriterLedger(WriterBase):
 
         if transfer.price:
             lines.append(
-                "{:4}{:50}{:10.4f} {} @ {:.4f} {}\n".format("", transfer.account,
+                "{:4}{:50}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
                                                             transfer.amount.value, transfer.amount.currency,
                                                             transfer.price.value, transfer.price.currency))
         elif transfer.amount:
@@ -73,7 +73,7 @@ class WriterLedger(WriterBase):
             lines.append("{:4}{} {}\n".format("", ";", tag))
 
         # Add properties
-        for name, prop in trans.properties.items():
+        for name, prop in dict(sorted(trans.properties.items())).items():
             lines.append("{:4}{} {}: {}\n".format("", ";", name, prop))
 
         # Add comments
@@ -99,7 +99,7 @@ class WriterLedger(WriterBase):
         :return: list of files written
         """
         files = defaultdict(list)
-        group_by = cs_category
+        group_by = cs_prop_category
         for trans in wallet.transactions:
             lines = WriterLedger._write_transaction(trans)
             group = trans.properties[group_by].lower() if group_by in trans.properties.keys() else "ungrouped"
