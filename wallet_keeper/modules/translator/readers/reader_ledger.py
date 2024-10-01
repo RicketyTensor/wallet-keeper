@@ -92,7 +92,8 @@ class ReaderLedger(ParserBase):
             price = None
         elif len(fields) == 2:
             amount = Dosh(fields[0], fields[1])
-            price = Dosh(fields[0], fields[1])
+            price = None
+            #price = Dosh(fields[0], fields[1])
         elif len(fields) == 5:
             amount = Dosh(fields[0], fields[1])
             if fields[2] == "@":
@@ -107,12 +108,12 @@ class ReaderLedger(ParserBase):
         return account, amount, price, l, t, c
 
     @staticmethod
-    def _read(path: Path, **kwargs) -> (List[Transaction], Dict[str, str], Transaction, Transaction):
+    def _read(path: Path, raw=True, **kwargs) -> (List[Transaction], Dict[str, str], Transaction, Transaction):
         """
         Translate input to an output
 
         :param path: file to translate
-        :param output_file: file into which to write
+        :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: wallet instance
         """
@@ -174,7 +175,7 @@ class ReaderLedger(ParserBase):
                             Transaction(
                                 trans_date, book_date, name,
                                 labels, tags, comments,
-                                transfers
+                                transfers, raw=raw
                             )
                         )
                     elif budg_m_opened:
@@ -182,14 +183,14 @@ class ReaderLedger(ParserBase):
                         budget_monthly = Transaction(
                             trans_date, book_date, name,
                             labels, tags, comments,
-                            transfers
+                            transfers, raw=raw
                         )
                     elif budg_y_opened:
                         budg_y_opened = False
                         budget_yearly = Transaction(
                             trans_date, book_date, name,
                             labels, tags, comments,
-                            transfers
+                            transfers, raw=raw
                         )
 
                     # Restart variables
@@ -221,7 +222,7 @@ class ReaderLedger(ParserBase):
                     else:
                         raise ValueError("Unknown date definition detected on the line {} of {}".format(i, path))
 
-                    name = " ".join(line.split(" ")[1:])
+                    name = " ".join(line.strip().split(" ")[1:])
 
                     continue  # skip to the next line
 
@@ -247,34 +248,34 @@ class ReaderLedger(ParserBase):
                     Transaction(
                         trans_date, book_date, name,
                         labels, tags, comments,
-                        transfers
+                        transfers, raw=raw
                     )
                 )
             elif budg_m_opened:
                 budget_monthly = Transaction(
                     trans_date, book_date, name,
                     labels, tags, comments,
-                    transfers
+                    transfers, raw=raw
                 )
             elif budg_y_opened:
                 budget_yearly = Transaction(
                     trans_date, book_date, name,
                     labels, tags, comments,
-                    transfers
+                    transfers, raw=raw
                 )
 
         return transactions, account_labels, budget_monthly, budget_yearly
 
     @staticmethod
-    def read(path: Path, **kwargs) -> Wallet:
+    def read(path: Path, raw=True, **kwargs) -> Wallet:
         """
         Translate input to an output
 
         :param path: list of files to translate
-
+        :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: wallet instance
         """
-        transactions, account_labels, budget_monthly, budget_yearly = ReaderLedger._read(path, **kwargs)
+        transactions, account_labels, budget_monthly, budget_yearly = ReaderLedger._read(path, raw, **kwargs)
 
         return Wallet(transactions, account_labels, budget_monthly, budget_yearly)

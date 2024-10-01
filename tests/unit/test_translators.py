@@ -105,6 +105,31 @@ class TestParser(unittest.TestCase):
                 if not filecmp.cmp(test_file, ref_file):
                     raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
 
+    def test_ledger_to_ledger(self):
+        prefix = "ledger_to_ledger-"
+        reader = fr.create(ReaderLedger.format)
+        writer = fw.create(WriterLedger.format)
+
+        p = Path(os.path.dirname(__file__))
+        test_files = list(p.glob("reference/input/ledger.ledger"))
+        out_dir = p / "output"
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+
+        if len(list(test_files)) < 1:
+            raise ValueError("No test filed were found!")
+
+        for file in test_files:
+            wallet = reader.read(file)
+            results = writer.write(wallet, out_dir, prefix)
+
+            for test_file in results:
+                ref_file = p / "reference" / "translators" / os.path.basename(test_file)
+                if self.update:
+                    shutil.copyfile(test_file, ref_file)
+
+                if not filecmp.cmp(test_file, ref_file):
+                    raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
 
 if __name__ == '__main__':
     unittest.main()

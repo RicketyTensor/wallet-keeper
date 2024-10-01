@@ -29,12 +29,12 @@ class ReaderCAMT52v8(ParserBase):
         pass
 
     @staticmethod
-    def _read(path: Path, **kwargs) -> List[Transaction]:
+    def _read(path: Path, raw=True, **kwargs) -> List[Transaction]:
         """
         Translate input to an output
 
         :param path: file to translate
-        :param output_file: file into which to write
+        :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: list of transactions
         """
@@ -94,21 +94,22 @@ class ReaderCAMT52v8(ParserBase):
                 Transaction(
                     valdate, valdate, "Raw",
                     [], data, [],
-                    [], raw=True
+                    [], raw=raw
                 )
             )
 
         return transactions
 
     @staticmethod
-    def read(path: Path, **kwargs) -> Wallet:
+    def read(path: Path, raw=True, **kwargs) -> Wallet:
         """
         Translate input to an output
 
         :param path: list of files to translate
+        :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: wallet instance
         """
-        transactions = ReaderCAMT52v8._read(path, **kwargs)
+        transactions = ReaderCAMT52v8._read(path, raw, **kwargs)
 
         return Wallet(transactions)
