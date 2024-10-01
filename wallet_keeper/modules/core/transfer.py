@@ -3,7 +3,7 @@ from wallet_keeper.modules.core.dosh import Dosh
 
 
 class Transfer(object):
-    def __init__(self, account: str, amount: Dosh, price: Dosh = None,
+    def __init__(self, account: str, amount: Dosh = None, price: Dosh = None,
                  tags: List[str] = None, properties: Dict[str, str] = None, comments: List[str] = None):
         """
         Constructor

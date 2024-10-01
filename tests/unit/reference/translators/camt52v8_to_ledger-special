@@ -1,0 +1,19 @@
+2021-10-01 Dental Insurance
+    ; category: special
+    ; class: optional
+    Assets:Checking                                       -31.60 EUR 
+    Expenses:Insurance:Dental                                     
+
+2021-09-30=2021-10-01 Life Insurance
+    ; category: special
+    ; class: optional
+    Assets:Checking                                      -190.00 EUR 
+    Expenses:Insurance:Life                                       
+
+2023-12-24=2023-07-08 Buying Commodities
+    ; fond: Big Bollocks
+    ; ISIN: DEPP123456
+    ; category: special
+    Assets:Checking                                      -555.55 EUR 
+    Equity:Securities:Fonds                               1.0456 BALLS @ 531.3217 EUR
+

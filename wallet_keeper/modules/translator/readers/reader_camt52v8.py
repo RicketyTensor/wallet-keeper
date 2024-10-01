@@ -9,6 +9,8 @@ from wallet_keeper.modules.core.transfer import Transfer
 from wallet_keeper.modules.core.dosh import Dosh
 from wallet_keeper.modules.core.wallet import Wallet
 import numpy
+from datetime import datetime
+from decimal import Decimal
 
 class ReaderCAMT52v8Builder(object):
     def __init__(self):
@@ -26,14 +28,15 @@ class ReaderCAMT52v8(ParserBase):
     def __init__(self):
         pass
 
-    def _read(self, path: Path, **kwargs) -> List[Dict]:
+    @staticmethod
+    def _read(path: Path, **kwargs) -> List[Transaction]:
         """
         Translate input to an output
 
         :param path: file to translate
         :param output_file: file into which to write
         :param kwargs: reader specific arguments
-        :return: dictionary with information
+        :return: list of transactions
         """
         tree = ET.parse(path)
         root = tree.getroot()
@@ -51,18 +54,18 @@ class ReaderCAMT52v8(ParserBase):
 
             # Basic
             status = get_value(entry, "ns:Sts/ns:Cd", ns)
-            valdate = get_value(entry, "ns:ValDt/ns:Dt", ns)
+            valdate = datetime.strptime(get_value(entry, "ns:ValDt/ns:Dt", ns), "%Y-%m-%d")
             addinfo = get_value(entry, "ns:AddtlNtryInf", ns)
 
             # Parties
             parties = get_element(details, "ns:RltdPties", ns)
-            creditor = get_value(parties, "ns:Cdtr/ns:Pty/ns:Nm", ns, empty=True)
-            debtor = get_value(parties, "ns:Dbtr/ns:Pty/ns:Nm", ns, empty=True)
-            dbtr_acct = get_value(parties, "ns:DbtrAcct/ns:Id/ns:IBAN", ns, empty=True)
-            sign = -1 if dbtr_acct == account else 1
+            creditor_name = get_value(parties, "ns:Cdtr/ns:Pty/ns:Nm", ns, empty=True)
+            creditor_acct = get_value(parties, "ns:CdtrAcct/ns:Id/ns:IBAN", ns, empty=True)
+            debtor_name = get_value(parties, "ns:Dbtr/ns:Pty/ns:Nm", ns, empty=True)
+            debtor_acct = get_value(parties, "ns:DbtrAcct/ns:Id/ns:IBAN", ns, empty=True)
 
             # Amount
-            amount = sign * float(get_value(details, "ns:Amt", ns))
+            amount = Decimal(get_value(details, "ns:Amt", ns))
             currency = get_attr(details, "ns:Amt", ns, "Ccy")
 
             # Message
@@ -78,25 +81,34 @@ class ReaderCAMT52v8(ParserBase):
                 cs_status: status,
                 cs_valdate: valdate,
                 cs_addinfo: addinfo,
-                cs_creditor: creditor,
-                cs_debtor: debtor,
+                cs_creditor_name: creditor_name,
+                cs_creditor_account: creditor_acct,
+                cs_debtor_name: debtor_name,
+                cs_debtor_account: debtor_acct,
                 cs_amount: amount,
                 cs_currency: currency,
                 cs_message: message
             }
 
-            transactions.append(data
+            transactions.append(
+                Transaction(
+                    valdate, valdate, "Raw",
+                    [], data, [],
+                    [], raw=True
+                )
             )
 
         return transactions
 
-    def read(self, path: Path, **kwargs) -> List[Dict]:
+    @staticmethod
+    def read(path: Path, **kwargs) -> Wallet:
         """
         Translate input to an output
 
         :param path: list of files to translate
-
         :param kwargs: reader specific arguments
-        :return: dictionary with data as lists
+        :return: wallet instance
         """
-        return self._read(path, **kwargs)
+        transactions = ReaderCAMT52v8._read(path, **kwargs)
+
+        return Wallet(transactions)

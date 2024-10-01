@@ -1,16 +1,43 @@
+2023-12-24=2023-12-21 Groceries
+    ; category: common
+    ; shop: Aldi
+    Assets:Checking                                       -24.24 EUR
+    Expenses:Groceries
+    Expenses:Alcohol
+
+2021-10-01 Dental Insurance
+    ; category: special
+    ; class: optional
+    Assets:Checking                                       -31.60 EUR
+    Expenses:Insurance:Dental
+
+2021-09-30=2021-10-01 Life Insurance
+    ; category: special
+    ; class: optional
+    Assets:Checking                                      -190.00 EUR
+    Expenses:Insurance:Life
+
+2023-12-24=2023-07-08 Buying Commodities
+    ; fond: Big Bollocks
+    ; ISIN: DEPP123456
+    ; category: special
+    Assets:Checking                                      -555.55 EUR
+    Equity:Securities:Fonds                               1.0456 BALLS @ 531.3217 EUR
+
 2021-10-01 Rent
-    ; Location: Dumpster Nr. 6
-    Assets:Checking                                   
-    Expenses:Rent               333.33 EUR
+    Assets:Checking                                      -333.33 EUR
+    Expenses:Rent
 
-2021-10-01 Buying beers
-    ; Had to buy extra beers
-    Assets:Checking                                   
-    Expenses:Groceries            31.6 EUR ; Item: snacks
-    Expenses:Alcohol              21.0 EUR
-
-2021-10-01=2021-10-03 Life Insurance
-    ; #Insurance
-    Assets:Checking                                   
-    Expenses:Insurance:Life       190.0 EUR
-
+2021-11-15=2021-11-15 Raw
+    ; account: IBAN111100001111
+    ; institution: Spasskasse
+    ; status: BOOK
+    ; value date: 2021-11-15 00:00:00
+    ; additional information: FOLGELASTSCHRIFT
+    ; creditor name: Dolmen
+    ; creditor account: IBAN123400001234
+    ; debtor name: Oompa Loompa
+    ; debtor account: IBAN111100001111
+    ; amount: 111.11
+    ; currency: EUR
+    ; message: Buying stuff I don't need.

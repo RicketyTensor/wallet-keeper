@@ -6,7 +6,7 @@ import datetime
 
 
 class Wallet(object):
-    def __init__(self, transactions: List[Transaction], account: Dict[str, str],
+    def __init__(self, transactions: List[Transaction], account: Dict[str, str] = None,
                  budget_monthly: Transaction = None, budget_yearly: Transaction = None):
         self.transactions = transactions
         self.account_labels = account

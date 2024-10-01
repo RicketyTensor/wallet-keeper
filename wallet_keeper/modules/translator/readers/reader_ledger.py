@@ -273,7 +273,7 @@ class ReaderLedger(ParserBase):
         :param path: list of files to translate
 
         :param kwargs: reader specific arguments
-        :return: dictionary with data as lists
+        :return: wallet instance
         """
         transactions, account_labels, budget_monthly, budget_yearly = ReaderLedger._read(path, **kwargs)
 

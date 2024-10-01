@@ -15,7 +15,7 @@
             <CreDtTm>2023-10-24T14:22:21+02:00</CreDtTm>
             <Acct>
                 <Id>
-                    <IBAN>123456789</IBAN>
+                    <IBAN>IBAN111100001111</IBAN>
                 </Id>
                 <Ccy>EUR</Ccy>
                 <Svcr>
@@ -97,7 +97,7 @@
                             </Dbtr>
                             <DbtrAcct>
                                 <Id>
-                                    <IBAN>123456789</IBAN>
+                                    <IBAN>IBAN111100001111</IBAN>
                                 </Id>
                             </DbtrAcct>
                             <Cdtr>
@@ -179,7 +179,7 @@
                             </Dbtr>
                             <DbtrAcct>
                                 <Id>
-                                    <IBAN>123456789</IBAN>
+                                    <IBAN>IBAN111100001111</IBAN>
                                 </Id>
                             </DbtrAcct>
                             <Cdtr>
@@ -265,7 +265,7 @@
                             </Dbtr>
                             <DbtrAcct>
                                 <Id>
-                                    <IBAN>123456789</IBAN>
+                                    <IBAN>IBAN111100001111</IBAN>
                                 </Id>
                             </DbtrAcct>
                             <Cdtr>
@@ -304,11 +304,251 @@
                             </CdtrAgt>
                         </RltdAgts>
                         <RmtInf>
-                            <Ustrd>Life LV-1-1234-4321 Loompa Oompa 01.10.2021</Ustrd>
+                            <Ustrd>Life LV-1-1234-4321 Loompa Oompa 30.09.2021</Ustrd>
                         </RmtInf>
                     </TxDtls>
                 </NtryDtls>
                 <AddtlNtryInf>FOLGELASTSCHRIFT</AddtlNtryInf>
+            </Ntry>
+            <Ntry>
+                <Amt Ccy="EUR">111.11</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>
+                    <Cd>BOOK</Cd>
+                </Sts>
+                <BookgDt>
+                    <Dt>2021-11-15</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2021-11-15</Dt>
+                </ValDt>
+                <AcctSvcrRef>2021-10-01-05.45.45.438320</AcctSvcrRef>
+                <BkTxCd/>
+                <NtryDtls>
+                    <TxDtls>
+                        <Refs>
+                            <Prtry>
+                                <Tp>FI-UMSATZ-ID</Tp>
+                                <Ref>2021-11-15-05.45.45.438320</Ref>
+                            </Prtry>
+                        </Refs>
+                        <Amt Ccy="EUR">111.11</Amt>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>ICDT</Cd>
+                                    <SubFmlyCd>STDO</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                            <Prtry>
+                                <Cd>NSTO+117+7000+997</Cd>
+                                <Issr>DK</Issr>
+                            </Prtry>
+                        </BkTxCd>
+                        <RltdPties>
+                            <Dbtr>
+                                <Pty>
+                                    <Nm>Oompa Loompa</Nm>
+                                </Pty>
+                            </Dbtr>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>IBAN111100001111</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <Cdtr>
+                                <Pty>
+                                    <Nm>Dolmen</Nm>
+                                </Pty>
+                            </Cdtr>
+                            <CdtrAcct>
+                                <Id>
+                                    <IBAN>IBAN123400001234</IBAN>
+                                </Id>
+                            </CdtrAcct>
+                        </RltdPties>
+                        <RltdAgts>
+                            <DbtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </DbtrAgt>
+                            <CdtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </CdtrAgt>
+                        </RltdAgts>
+                        <Purp>
+                            <Cd>RINP</Cd>
+                        </Purp>
+                        <RmtInf>
+                            <Ustrd>Buying stuff I don't need.</Ustrd>
+                        </RmtInf>
+                    </TxDtls>
+                </NtryDtls>
+                <AddtlNtryInf>FOLGELASTSCHRIFT</AddtlNtryInf>
+            </Ntry>
+            <Ntry>
+                <Amt Ccy="EUR">24.24</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>
+                    <Cd>BOOK</Cd>
+                </Sts>
+                <BookgDt>
+                    <Dt>2023-12-21</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2023-12-21</Dt>
+                </ValDt>
+                <AcctSvcrRef>2023-12-21-05.45.45.438320</AcctSvcrRef>
+                <BkTxCd/>
+                <NtryDtls>
+                    <TxDtls>
+                        <Refs>
+                            <Prtry>
+                                <Tp>FI-UMSATZ-ID</Tp>
+                                <Ref>2023-12-21-05.45.45.438320</Ref>
+                            </Prtry>
+                        </Refs>
+                        <Amt Ccy="EUR">24.24</Amt>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>ICDT</Cd>
+                                    <SubFmlyCd>STDO</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                            <Prtry>
+                                <Cd>NSTO+117+7000+997</Cd>
+                                <Issr>DK</Issr>
+                            </Prtry>
+                        </BkTxCd>
+                        <RltdPties>
+                            <Dbtr>
+                                <Pty>
+                                    <Nm>Oompa Loompa</Nm>
+                                </Pty>
+                            </Dbtr>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>IBAN111100001111</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <Cdtr>
+                                <Pty>
+                                    <Nm>Aldi</Nm>
+                                </Pty>
+                            </Cdtr>
+                            <CdtrAcct>
+                                <Id>
+                                    <IBAN>IBAN444400004444</IBAN>
+                                </Id>
+                            </CdtrAcct>
+                        </RltdPties>
+                        <RltdAgts>
+                            <DbtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </DbtrAgt>
+                            <CdtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </CdtrAgt>
+                        </RltdAgts>
+                        <Purp>
+                            <Cd>RINP</Cd>
+                        </Purp>
+                        <RmtInf>
+                            <Ustrd>Thank you for shopping at Aldi 24.12.2023</Ustrd>
+                        </RmtInf>
+                    </TxDtls>
+                </NtryDtls>
+                <AddtlNtryInf>FOLGELASTSCHRIFT</AddtlNtryInf>
+            </Ntry>
+            <Ntry>
+                <Amt Ccy="EUR">555.55</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>
+                    <Cd>BOOK</Cd>
+                </Sts>
+                <BookgDt>
+                    <Dt>2023-07-08</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2023-07-08</Dt>
+                </ValDt>
+                <AcctSvcrRef>2023-07-08-05.45.45.438320</AcctSvcrRef>
+                <BkTxCd/>
+                <NtryDtls>
+                    <TxDtls>
+                        <Refs>
+                            <Prtry>
+                                <Tp>FI-UMSATZ-ID</Tp>
+                                <Ref>2023-07-08-05.45.45.438320</Ref>
+                            </Prtry>
+                        </Refs>
+                        <Amt Ccy="EUR">555.55</Amt>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>ICDT</Cd>
+                                    <SubFmlyCd>STDO</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                            <Prtry>
+                                <Cd>NSTO+117+7000+997</Cd>
+                                <Issr>DK</Issr>
+                            </Prtry>
+                        </BkTxCd>
+                        <RltdPties>
+                            <Dbtr>
+                                <Pty>
+                                    <Nm>Oompa Loompa</Nm>
+                                </Pty>
+                            </Dbtr>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>IBAN111100001111</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <Cdtr>
+                                <Pty>
+                                    <Nm>Diebe Inc.</Nm>
+                                </Pty>
+                            </Cdtr>
+                            <CdtrAcct>
+                                <Id>
+                                    <IBAN>IBAN666600006666</IBAN>
+                                </Id>
+                            </CdtrAcct>
+                        </RltdPties>
+                        <RltdAgts>
+                            <DbtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </DbtrAgt>
+                            <CdtrAgt>
+                                <FinInstnId>
+                                    <BICFI>BUMBLEBEE</BICFI>
+                                </FinInstnId>
+                            </CdtrAgt>
+                        </RltdAgts>
+                        <Purp>
+                            <Cd>RINP</Cd>
+                        </Purp>
+                        <RmtInf>
+                            <Ustrd>HaHaHa 24.12.2023 Stueck 1,0456 Preis 531,3217 from isin depp123456</Ustrd>
+                        </RmtInf>
+                    </TxDtls>
+                </NtryDtls>
+                <AddtlNtryInf>WERTPAPIERE</AddtlNtryInf>
             </Ntry>
         </Rpt>
     </BkToCstmrAcctRpt>
