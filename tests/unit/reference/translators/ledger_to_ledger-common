@@ -1,7 +1,10 @@
 2023-12-24=2023-12-21 Groceries
-    ; Category: common
+    ; Group: Common
     ; Shop: Aldi
-    Assets:Checking                                       -24.24 EUR 
-    Expenses:Groceries                                            
-    Expenses:Alcohol                                              
+    Assets:Checking                             -24.24 EUR 
+    Expenses:Groceries                                  
+    ; :Food:Junk Stuff:
+    ; Class: Essentials
+    Expenses:Alcohol                                    
+    ; Class: Entertainment
 

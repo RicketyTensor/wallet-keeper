@@ -18,6 +18,6 @@ class Transfer(object):
         self.account = account
         self.amount = amount
         self.price = price
-        self.labels = labels
-        self.properties = properties
-        self.comments = comments
+        self.labels = labels if labels else []
+        self.properties = properties if properties else {}
+        self.comments = comments if comments else []

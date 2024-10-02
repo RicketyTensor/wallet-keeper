@@ -1,29 +1,34 @@
 2023-12-24=2023-12-21 Groceries
-    ; Category: common
+    ; Group: Common
     ; Shop: Aldi
     Assets:Checking                                       -24.24 EUR
     Expenses:Groceries
+    ; :Food:Junk Stuff:
+    ; Class: Essentials
     Expenses:Alcohol
+    ; Class: Entertainment
 
 2021-10-01 Dental Insurance
-    ; Category: special
-    ; Class: optional
+    ; Group: Special
+    ; Class: Optional
     Assets:Checking                                       -31.60 EUR
     Expenses:Insurance:Dental
 
 2021-09-30=2021-10-01 Life Insurance
-    ; Category: special
-    ; Class: optional
+    ; Group: Special
+    ; Class: Optional
     Assets:Checking                                      -190.00 EUR
     Expenses:Insurance:Life
 
 2023-12-24=2023-07-08 Buying Commodities
-    ; Fond: Big Bollocks
-    ; ISIN: DEPP123456
-    ; Category: special
+    ; Group: Special
     Assets:Checking                                      -1250.00 EUR
     Equity:Securities:Fonds                               1.0000 BALLS @ 250.0000 EUR
+    ; Fond: Big Bollocks
+    ; ISIN: DEPP123456
     Equity:Securities:Fonds                               2.0000 NUTS @@ 1000.0000 EUR
+    ; :YOLO:Wasting Money:
+    ; Fond: Small nuts
 
 2021-10-01 Rent
     Assets:Checking                                      -333.33 EUR

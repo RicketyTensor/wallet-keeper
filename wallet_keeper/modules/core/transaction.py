@@ -7,7 +7,7 @@ import numpy
 
 class Transaction(object):
     def __init__(self, trans_date: datetime, book_date: datetime, name: str,
-                 tags: List[str], properties: Dict[str, str], comments: List[str],
+                 labels: List[str], properties: Dict[str, str], comments: List[str],
                  transfers: List[Transfer], raw=False):
         """
         Constructor
@@ -15,7 +15,7 @@ class Transaction(object):
         :param trans_date: date of initiating the transaction
         :param book_date: date on which the transaction has been booked
         :param name: name of the transaction
-        :param tags: list with labels (#LABEL)
+        :param labels: list with labels (#LABEL)
         :param properties: dictionary with tags and values
         :param comments: text comment
         :param transfers: changes to account states
@@ -23,7 +23,7 @@ class Transaction(object):
         self.trans_date = trans_date if trans_date else book_date
         self.book_date = book_date
         self.name = name
-        self.tags = tags
+        self.labels = labels
         self.properties = properties
         self.comments = comments
         self.transfers = transfers

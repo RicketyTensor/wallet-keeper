@@ -29,7 +29,7 @@ class TestParser(unittest.TestCase):
                 cs_from: "Assets:Checking",
                 cs_to: "Expenses:Insurance:Dental",
                 cs_prop: {
-                    cs_prop_category: "special",
+                    cs_prop_group: "special",
                     cs_prop_class: "optional"
                 }
             },
@@ -38,7 +38,7 @@ class TestParser(unittest.TestCase):
                 cs_from: "Assets:Checking",
                 cs_to: "Expenses:Insurance:Life",
                 cs_prop: {
-                    cs_prop_category: "special",
+                    cs_prop_group: "special",
                     cs_prop_class: "optional"
                 }
             },
@@ -55,7 +55,7 @@ class TestParser(unittest.TestCase):
                     "Expenses:Alcohol"
                 ],
                 cs_prop: {
-                    cs_prop_category: "common",
+                    cs_prop_group: "common",
                     cs_prop_shop: "Aldi"
                 }
             },
@@ -69,7 +69,7 @@ class TestParser(unittest.TestCase):
                 cs_prop: {
                     cs_prop_fond: "Big Bollocks",
                     cs_prop_isin: "DEPP123456",
-                    cs_prop_category: "special"
+                    cs_prop_group: "special"
                 },
                 "commodity": {
                     "pattern": "ck *([0-9],[0-9][0-9][0-9][0-9])",
@@ -83,7 +83,7 @@ class TestParser(unittest.TestCase):
         }
 
         p = Path(os.path.dirname(__file__))
-        test_files = list(p.glob("reference/input/camt52v8.xml"))
+        test_files = list(p.glob("input/camt52v8.xml"))
         out_dir = p / "output"
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
@@ -110,7 +110,7 @@ class TestParser(unittest.TestCase):
         writer = fw.create(WriterLedger.format)
 
         p = Path(os.path.dirname(__file__))
-        test_files = list(p.glob("reference/input/ledger.ledger"))
+        test_files = list(p.glob("input/ledger.ledger"))
         out_dir = p / "output"
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)

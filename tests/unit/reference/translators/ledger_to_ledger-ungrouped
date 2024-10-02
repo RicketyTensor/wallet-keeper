@@ -1,19 +1,17 @@
 2021-10-01=2021-10-01 Rent
-    Assets:Checking                                      -333.33 EUR 
-    Expenses:Rent                                                 
+    Assets:Checking                            -333.33 EUR 
+    Expenses:Rent                                       
 
 2021-11-15=2021-11-15 value date: 2021-11-15 00:00:00
     ; account: IBAN111100001111
+    ; additional information: FOLGELASTSCHRIFT
     ; amount: 111.11
+    ; creditor account: IBAN123400001234
+    ; creditor name: Dolmen
     ; currency: EUR
-    ; information: FOLGELASTSCHRIFT
+    ; debtor account: IBAN111100001111
+    ; debtor name: Oompa Loompa
     ; institution: Spasskasse
     ; message: Buying stuff I don't need.
-    ; name: Oompa Loompa
     ; status: BOOK
-    ; additional
-    ; creditor
-    ; creditor
-    ; debtor
-    ; debtor
 

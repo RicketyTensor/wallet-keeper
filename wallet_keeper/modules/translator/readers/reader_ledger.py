@@ -36,13 +36,23 @@ class ReaderLedger(ParserBase):
         :return:
         """
         labels = []
-        tags = {}
+        properties = {}
         comments = []
 
-        messages = line.split(";")[1:]
+        messages = line.strip().split(";")[1:]
         if len(messages) > 0:
-            for msg in messages:
-                potential_tags = re.findall(r"\S*:\s", msg)
+            for message in messages:
+                msg = message
+
+                # Check for labels
+                potential_labels = ["".join(e) for e in re.findall(r"(?>:(\S))(.*?)(?=(\S):)", msg)]
+                if len(potential_labels) > 0:
+                    labels.extend(potential_labels)
+                for label in potential_labels:
+                    msg = msg.replace(label + ":", "")
+                msg = msg.replace(" :","").strip()
+
+                potential_tags = re.findall(r"(^[A-z].*\S:)", msg)
                 n = len(potential_tags)
                 for j, tag in enumerate(potential_tags):
                     if j == n - 1:
@@ -53,16 +63,14 @@ class ReaderLedger(ParserBase):
                                            msg)[0].strip()
 
                     name = tag.replace(":", "").strip()
-                    tags[name] = value
+                    properties[name] = value
                     msg = msg.replace(tag, "")
                     msg = msg.replace(value, "")
 
                 if msg.strip():
                     comments.append(msg.strip())
 
-            # todo: One day, add reading for labels (#LABEL)
-
-        return labels, tags, comments
+        return labels, properties, comments
 
     @staticmethod
     def _extract_transfer(line, i, path) -> (str, Dosh, Dosh, List[str], Dict[str, str], List[str]):
@@ -97,9 +105,9 @@ class ReaderLedger(ParserBase):
         elif len(fields) == 5:
             amount = Dosh(fields[0], fields[1])
             if fields[2] == "@":
-                price = Dosh(fields[0], fields[4]) * Dosh(fields[3], fields[4])
+                price = Dosh(numpy.abs(float(fields[0])), fields[4]) * Dosh(fields[3], fields[4])
             elif fields[2] == "@@":
-                price = Dosh(numpy.sign(float(fields[0])), fields[4]) * Dosh(fields[3], fields[4])
+                price = Dosh(fields[3], fields[4])
             else:
                 raise ValueError("Unknown price specification on the line {} of {}".format(i + 1, path))
         else:
@@ -128,14 +136,21 @@ class ReaderLedger(ParserBase):
         trans_date = None
         book_date = None
         name = None
-        labels = []
-        tags = {}
-        comments = []
+        t_labels = []
+        t_properties = {}
+        t_comments = []
+        tt_labels = []
+        tt_properties = {}
+        tt_comments = []
         transfers = []
+        account = None
+        amount = None
+        price = None
 
         # Go over lines
         transactions = []
-        tran_opened = False
+        transaction_open = False
+        transfer_open = False
         budg_m_opened = False
         budg_y_opened = False
         for i, line in enumerate(lines):
@@ -166,15 +181,22 @@ class ReaderLedger(ParserBase):
                 pattern = "([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])"
                 match = re.findall(pattern, line)
 
-                if len(match) == 0 and not (tran_opened or budg_m_opened or budg_y_opened):  # skip initial lines of a file till a transaction is detected
+                if len(match) == 0 and not (transaction_open or budg_m_opened or budg_y_opened):  # skip initial lines of a file till a transaction is detected
                     continue
                 elif not line.strip():
-                    if tran_opened:
-                        tran_opened = False
+                    if transaction_open:
+                        if transfer_open:
+                            transfers.append(Transfer(account, amount, price, tt_labels, tt_properties, tt_comments))
+                            tt_labels = []
+                            tt_properties = {}
+                            tt_comments = []
+                            transfer_open = False
+
+                        transaction_open = False
                         transactions.append(
                             Transaction(
                                 trans_date, book_date, name,
-                                labels, tags, comments,
+                                t_labels, t_properties, t_comments,
                                 transfers, raw=raw
                             )
                         )
@@ -182,14 +204,14 @@ class ReaderLedger(ParserBase):
                         budg_m_opened = False
                         budget_monthly = Transaction(
                             trans_date, book_date, name,
-                            labels, tags, comments,
+                            t_labels, t_properties, t_comments,
                             transfers, raw=raw
                         )
                     elif budg_y_opened:
                         budg_y_opened = False
                         budget_yearly = Transaction(
                             trans_date, book_date, name,
-                            labels, tags, comments,
+                            t_labels, t_properties, t_comments,
                             transfers, raw=raw
                         )
 
@@ -197,9 +219,9 @@ class ReaderLedger(ParserBase):
                     trans_date = None
                     book_date = None
                     name = None
-                    labels = []
-                    tags = {}
-                    comments = []
+                    t_labels = []
+                    t_properties = {}
+                    t_comments = []
                     transfers = []
 
                 # First line of a transaction
@@ -209,8 +231,8 @@ class ReaderLedger(ParserBase):
                     budg_y_opened = False
 
                     # Check if a transaction is ready to be closed
-                    if not tran_opened:  # Start the first transaction
-                        tran_opened = True
+                    if not transaction_open:  # Start the first transaction
+                        transaction_open = True
 
                     # Read dates
                     if len(match) == 1:
@@ -229,39 +251,69 @@ class ReaderLedger(ParserBase):
                 # Check for transaction wide tags and comments
                 if line.strip().startswith(";"):
                     l, t, c = ReaderLedger._extract_comments(line)
-                    if len(l) > 0:
-                        labels.extend(l)
-                    if len(t) > 0:
-                        tags.update(t)
-                    if len(c) > 0:
-                        comments.extend(c)
+                    if transfer_open:
+                        if len(l) > 0:
+                            tt_labels.extend(l)
+                        if len(t) > 0:
+                            tt_properties.update(t)
+                        if len(c) > 0:
+                            tt_comments.extend(c)
+                    elif transaction_open:
+                        if len(l) > 0:
+                            t_labels.extend(l)
+                        if len(t) > 0:
+                            t_properties.update(t)
+                        if len(c) > 0:
+                            t_comments.extend(c)
+
+
                 else:
                     # Process transfers
                     # -----------------
                     entry = line.strip()
                     if entry:
+                        if transfer_open:
+                            transfers.append(Transfer(account, amount, price, tt_labels, tt_properties, tt_comments))
+                            tt_labels = []
+                            tt_properties = {}
+                            tt_comments = []
+                        transfer_open = True
+
                         account, amount, price, l, t, c = ReaderLedger._extract_transfer(entry, i, path)
-                        transfers.append(Transfer(account, amount, price, l, t, c))
+                        if len(l) > 0:
+                            tt_labels.extend(l)
+                        if len(t) > 0:
+                            tt_properties.update(t)
+                        if len(c) > 0:
+                            tt_comments.extend(c)
+
 
         else:
-            if tran_opened:
+            if transaction_open:
+                if transfer_open:
+                    transfers.append(Transfer(account, amount, price, tt_labels, tt_properties, tt_comments))
+                    tt_labels = []
+                    tt_properties = {}
+                    tt_comments = []
+                    transfer_open = False
+
                 transactions.append(
                     Transaction(
                         trans_date, book_date, name,
-                        labels, tags, comments,
+                        t_labels, t_properties, t_comments,
                         transfers, raw=raw
                     )
                 )
             elif budg_m_opened:
                 budget_monthly = Transaction(
                     trans_date, book_date, name,
-                    labels, tags, comments,
+                    t_labels, t_properties, t_comments,
                     transfers, raw=raw
                 )
             elif budg_y_opened:
                 budget_yearly = Transaction(
                     trans_date, book_date, name,
-                    labels, tags, comments,
+                    t_labels, t_properties, t_comments,
                     transfers, raw=raw
                 )
 

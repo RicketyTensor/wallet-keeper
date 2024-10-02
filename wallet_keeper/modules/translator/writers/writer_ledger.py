@@ -37,16 +37,28 @@ class WriterLedger(WriterBase):
 
         if transfer.price:
             lines.append(
-                "{:4}{:50}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
+                "{:4}{:40}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
                                                             transfer.amount.value, transfer.amount.currency,
                                                             transfer.price.value, transfer.price.currency))
         elif transfer.amount:
             lines.append(
-                "{:4}{:50}{:10.2f} {} \n".format("", transfer.account,
+                "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
                                                  transfer.amount.value, transfer.amount.currency))
         else:
             lines.append(
-                "{:4}{:50}{:10} {} \n".format("", transfer.account, "", ""))
+                "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
+
+        # Add comments
+        for comment in transfer.comments:
+            lines.append("{:4}{} {}\n".format("", ";", comment))
+
+        # Add tags/labels
+        if len(transfer.labels) > 0:
+            lines.append("{:4}{} :{}:\n".format("", ";", ":".join(transfer.labels)))
+
+        # Add properties
+        for name, prop in dict(sorted(transfer.properties.items())).items():
+            lines.append("{:4}{} {}: {}\n".format("", ";", name, prop))
 
         return lines
 
@@ -68,17 +80,17 @@ class WriterLedger(WriterBase):
         else:
             lines.append("{} {}\n".format(date2, trans.name))
 
-        # Add tags
-        for tag in trans.tags:
-            lines.append("{:4}{} {}\n".format("", ";", tag))
+        # Add comments
+        for comment in trans.comments:
+            lines.append("{:4}{} {}\n".format("", ";", comment))
+
+        # Add tags/labels
+        if len(trans.labels) > 0:
+            lines.append("{:4}{} :{}:\n".format("", ";", ":".join(trans.labels)))
 
         # Add properties
         for name, prop in dict(sorted(trans.properties.items())).items():
             lines.append("{:4}{} {}: {}\n".format("", ";", name, prop))
-
-        # Add comments
-        for comment in trans.comments:
-            lines.append("{:4}{} {}\n".format("", ";", comment))
 
         for transfer in trans.transfers:
             lines.extend(WriterLedger._write_transfer(transfer))
@@ -99,7 +111,7 @@ class WriterLedger(WriterBase):
         :return: list of files written
         """
         files = defaultdict(list)
-        group_by = cs_prop_category
+        group_by = cs_prop_group
         for trans in wallet.transactions:
             lines = WriterLedger._write_transaction(trans)
             group = trans.properties[group_by].lower() if group_by in trans.properties.keys() else "ungrouped"

@@ -126,7 +126,7 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
             )
 
     trans.trans_date = actual_date
-    trans.tags = labels
+    trans.labels = labels
     trans.properties = properties
     trans.comments = comments
     trans.name = name

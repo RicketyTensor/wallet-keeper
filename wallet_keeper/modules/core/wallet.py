@@ -82,7 +82,7 @@ class Wallet(object):
                           tt.amount.value, tt.amount.currency,
                           tt.price.value, tt.price.currency) for tt in t.transfers])
 
-            t_tags = {k: True for k in t.tags}
+            t_tags = {k: True for k in t.labels}
             t_props = t.properties
             t_comments = ["\n".join(t.comments)]
 
