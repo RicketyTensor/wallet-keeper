@@ -247,6 +247,7 @@ def display_cetegory(data_monthly, month_start, month_end):
 
 def category_grid():
     df = processing.get_account_totals(hierarchy=False)
+    return []
     categories = list(filter(None, {processing.get_account_category(a) for a in df["account"] if a}))
 
     n = len(categories)

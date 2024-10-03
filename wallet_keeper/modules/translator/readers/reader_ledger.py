@@ -100,8 +100,7 @@ class ReaderLedger(ParserBase):
             price = None
         elif len(fields) == 2:
             amount = Dosh(fields[0], fields[1])
-            price = None
-            #price = Dosh(fields[0], fields[1])
+            price = Dosh(fields[0], fields[1])
         elif len(fields) == 5:
             amount = Dosh(fields[0], fields[1])
             if fields[2] == "@":
@@ -156,7 +155,7 @@ class ReaderLedger(ParserBase):
         for i, line in enumerate(lines):
             if line.startswith("include"):
                 include_path = path.parent / line.split(" ")[1].strip()
-                tr, al, bm, by = ReaderLedger._read(include_path, **kwargs)
+                tr, al, bm, by = ReaderLedger._read(include_path, raw=raw, **kwargs)
                 transactions.extend(tr)
                 account_labels.update(al)
                 budget_monthly = bm if bm else budget_monthly

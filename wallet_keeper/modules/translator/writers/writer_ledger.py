@@ -35,18 +35,20 @@ class WriterLedger(WriterBase):
         """
         lines = []
 
-        if transfer.price:
+        if not transfer.amount:
+            lines.append(
+                "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
+        elif transfer.amount == transfer.price:
+            lines.append(
+                "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
+                                                 transfer.amount.value, transfer.amount.currency))
+        elif transfer.price:
             lines.append(
                 "{:4}{:40}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
                                                             transfer.amount.value, transfer.amount.currency,
                                                             transfer.price.value, transfer.price.currency))
-        elif transfer.amount:
-            lines.append(
-                "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
-                                                 transfer.amount.value, transfer.amount.currency))
         else:
-            lines.append(
-                "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
+            raise ValueError("Un-allowed amount definition in a transfer {}".format(transfer.amount))
 
         # Add comments
         for comment in transfer.comments:

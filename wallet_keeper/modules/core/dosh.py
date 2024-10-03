@@ -54,3 +54,9 @@ class Dosh(object):
                 raise ValueError(
                     "Cannot multiple two different currencies {} and {}".format(self.currency, other.currency))
 
+    def __eq__(self, other):
+        if isinstance(other, Dosh):
+            return self._value == other.value and self._currency == other.currency
+        else:
+            raise ValueError(
+                "Cannot compare classes {} and {}".format(type(self), type(other)))

@@ -3,7 +3,6 @@ import numpy
 import re
 from pathlib import Path
 from wallet_keeper.modules.translator.factory_reader import factory as factory_reader
-from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedger
 from wallet_keeper.modules.core.wallet import Wallet
 import calendar
@@ -16,7 +15,7 @@ def prepare(file: Path):
 
     # reader = factory_reader.create(ReaderMobusXML.format)
     reader = factory_reader.create(ReaderLedger.format)
-    wallet = reader.read(file)
+    wallet = reader.read(file, raw=False)
 
 # Establish account hierarchy
 def get_hierarchy(words, delim=":"):

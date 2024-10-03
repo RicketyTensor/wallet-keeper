@@ -76,3 +76,4 @@ class Transaction(object):
             raise ValueError("The following transaction cannot be balanced!\n"
                              "Reason: Unknown failure condition!\n"
                              "{}={} {}".format(date(self.trans_date), date(self.book_date), self.name))
+
