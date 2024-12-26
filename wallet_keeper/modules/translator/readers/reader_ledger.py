@@ -100,7 +100,7 @@ class ReaderLedger(ParserBase):
             price = None
         elif len(fields) == 2:
             amount = Dosh(fields[0], fields[1])
-            price = Dosh(fields[0], fields[1])
+            price = abs(Dosh(fields[0], fields[1]))
         elif len(fields) == 5:
             amount = Dosh(fields[0], fields[1])
             if fields[2] == "@":

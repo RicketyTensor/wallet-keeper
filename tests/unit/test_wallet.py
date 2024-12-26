@@ -2,7 +2,6 @@ import unittest
 import os
 from pathlib import Path
 from wallet_keeper.modules.translator.factory_reader import factory
-from wallet_keeper.modules.translator.readers.reader_mobus_xml import ReaderMobusXML
 from wallet_keeper.modules.core.wallet import Wallet
 from decimal import Decimal
 
@@ -13,7 +12,6 @@ class TestWallet(unittest.TestCase):
         cls.update = False
         base = Path(os.path.dirname(__file__))
         file = base / "reference" / "visualizer" / "mobus_xml.xml"
-        reader = factory.create(ReaderMobusXML.format)
         data = reader.read(Path(file))
         cls.wallet = Wallet()
         cls.wallet.build(data)

@@ -85,7 +85,11 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
             match = matches[0].strip().replace(",", ".")
             price_value = match
             price_currency = rule[cs_price][cs_name]
-            price = Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency)
+            price = round(Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency), 4)
+
+    # If the price is not given
+    if not price:
+        price = abs(amount)
 
     # Add tags
     if cs_tag in rule.keys():
@@ -107,7 +111,7 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
     # =============
     sign = -1 if trans.properties[cs_debtor_account] == trans.properties[cs_account] else 1
     transfers.append(
-        Transfer(rule[cs_from], amount * sign, None)
+        Transfer(rule[cs_from], amount * sign, price)
     )
 
     # TO transfer

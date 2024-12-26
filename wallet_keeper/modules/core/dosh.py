@@ -60,3 +60,9 @@ class Dosh(object):
         else:
             raise ValueError(
                 "Cannot compare classes {} and {}".format(type(self), type(other)))
+
+    def __abs__(self):
+        return self.__class__(str(abs(self.value)), self._currency)
+
+    def __round__(self, n):
+        return self.__class__(str(round(self.value, n)), self._currency)

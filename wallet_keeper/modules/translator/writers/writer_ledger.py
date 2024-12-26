@@ -38,7 +38,7 @@ class WriterLedger(WriterBase):
         if not transfer.amount:
             lines.append(
                 "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
-        elif transfer.amount == transfer.price:
+        elif abs(transfer.amount) == transfer.price:
             lines.append(
                 "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
                                                  transfer.amount.value, transfer.amount.currency))
@@ -94,6 +94,7 @@ class WriterLedger(WriterBase):
         for name, prop in dict(sorted(trans.properties.items())).items():
             lines.append("{:4}{} {}: {}\n".format("", ";", name, prop))
 
+        # Add transfers
         for transfer in trans.transfers:
             lines.extend(WriterLedger._write_transfer(transfer))
 
