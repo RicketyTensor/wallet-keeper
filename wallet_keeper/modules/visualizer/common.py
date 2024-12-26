@@ -11,7 +11,6 @@ from wallet_keeper.modules.visualizer import processing
 from decimal import Decimal
 import re
 import numpy
-from statsmodels.tsa.arima.model import ARIMA
 
 
 def make_month_selector():
