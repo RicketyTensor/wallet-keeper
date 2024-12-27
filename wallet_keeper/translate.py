@@ -5,6 +5,7 @@ import os
 from modules.translator.translations import allowed_translations
 from modules.translator.factory_reader import factory as fr
 from modules.translator.factory_writer import factory as fw
+from wallet_keeper.modules.translator.processing import process_wallet
 import json
 import glob
 
@@ -22,17 +23,16 @@ def translate(files: List[Path], reader_format: str, writer_format: str, rules: 
     :param tag: tag to add to the generated file names
     :return: path to a written database
     """
+    # Read
     reader = fr.create(reader_format)
-    transactions = []
-    for file in files:
-        # 1. Parse
-        transactions.extend(reader.read(Path(file)))
+    wallet = reader.read(files)
+    wallet = process_wallet(wallet, rules)
 
-    # 2. Write
+    # Write
     writer = fw.create(writer_format)
-    files = writer.write(transactions, rules, output, tag)
+    results = writer.write(wallet, output, tag)
 
-    return files
+    return results
 
 
 if __name__ == "__main__":

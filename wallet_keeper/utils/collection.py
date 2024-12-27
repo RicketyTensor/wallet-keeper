@@ -29,7 +29,11 @@ cs_price = "price"
 cs_pattern = "pattern"
 cs_fields = "fields"
 
-cs_prop = "Properties"
+# Transfers
+cs_transfers = "transfers"
+
+# Properties
+cs_props = "properties"
 cs_prop_category = "Category"
 cs_prop_group = "Group"
 cs_prop_shop = "Shop"
@@ -42,7 +46,7 @@ cs_prop_id = "ID"
 cs_prop_depot = "Depot"
 cs_prop_broker = "Broker"
 cs_prop_association = "Association"
-cs_prop_reason = "Reason"
+cs_prop_reason = "reason"
 cs_prop_recurrence = "Recurrence"
 cs_prop_subscription = "Subscription"
 cs_prop_location = "Location"
@@ -52,3 +56,5 @@ cs_prop_detail = "Detail"
 cs_prop_event = "Event"
 cs_prop_stock = "Stock"
 
+#
+cs_labels = "labels"

@@ -37,14 +37,14 @@ class WriterLedger(WriterBase):
 
         if not transfer.amount:
             lines.append(
-                "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
+                "{:4}{:30}{:10} {} \n".format("", transfer.account, "", ""))
         elif abs(transfer.amount) == transfer.price:
             lines.append(
-                "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
+                "{:4}{:30}{:10.2f} {} \n".format("", transfer.account,
                                                  transfer.amount.value, transfer.amount.currency))
         elif transfer.price:
             lines.append(
-                "{:4}{:40}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
+                "{:4}{:30}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
                                                             transfer.amount.value, transfer.amount.currency,
                                                             transfer.price.value, transfer.price.currency))
         else:

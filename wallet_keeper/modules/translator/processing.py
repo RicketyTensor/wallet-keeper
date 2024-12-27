@@ -30,6 +30,49 @@ def _check_match(trans: Transaction, rule: Dict) -> bool:
 
     return check
 
+def _process_transfer(properties: Dict, rule: Dict, i: int) -> Transfer:
+    """
+    Process a transfer entry
+
+    :param properties: properties attached to the transaction
+    :param rule: rule for the transfer
+    :param i: position of the transfer in the transaction
+    :return: Transaction
+    """
+    account = rule[cs_account]
+    message = properties[cs_message]
+    amount = None
+    price = None
+    l = rule[cs_labels] if cs_labels in rule.keys() else []
+    p = rule[cs_props] if cs_props in rule.keys() else {}
+    c = rule[cs_comment] if cs_comment in rule.keys() else []
+
+    # First transfer
+    if i == 0:
+        amount = Dosh(properties[cs_amount] * -1, properties[cs_currency])
+        price = abs(amount)
+    # Process commodities
+    elif cs_commodity in rule.keys():
+        pattern = rule[cs_commodity][cs_pattern]
+        matches = re.findall(pattern, message.lower())
+        if len(matches) < 1:
+            pass
+        else:
+            match = matches[0].strip().replace(",", ".")
+            commodity_amount = match
+            commodity_name = rule[cs_commodity][cs_name]
+            amount = Dosh(commodity_amount, commodity_name)
+
+            pattern = rule[cs_price][cs_pattern]
+            matches = re.findall(pattern, message.lower())
+            if len(matches) < 1:
+                raise ValueError("Pattern \"{}\" was not detected in the text \"{}\"".format(pattern, message))
+            match = matches[0].strip().replace(",", ".")
+            price_value = match
+            price_currency = rule[cs_price][cs_name]
+            price = round(Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency), 4)
+
+    return Transfer(account, amount, price, l, p, c)
 
 def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
     """
@@ -39,8 +82,6 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
     :param name: name for the transaction
     :param rule: rule to apply
     """
-    lines = []
-
     # Process data
     message = trans.properties[cs_message]
     labels = []
@@ -62,34 +103,11 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
     else:
         actual_date = None
 
-    # Commodities
-    # ===========
-    amount = Dosh(trans.properties[cs_amount], trans.properties[cs_currency])
-    price = None
-    commodity = None
-    if cs_commodity in rule.keys():
-        pattern = rule[cs_commodity][cs_pattern]
-        matches = re.findall(pattern, message.lower())
-        if len(matches) < 1:
-            pass
-        else:
-            match = matches[0].strip().replace(",", ".")
-            commodity_amount = match
-            commodity_name = rule[cs_commodity][cs_name]
-            commodity = Dosh(commodity_amount, commodity_name)
-
-            pattern = rule[cs_price][cs_pattern]
-            matches = re.findall(pattern, message.lower())
-            if len(matches) < 1:
-                raise ValueError("Pattern \"{}\" was not detected in the text \"{}\"".format(pattern, message))
-            match = matches[0].strip().replace(",", ".")
-            price_value = match
-            price_currency = rule[cs_price][cs_name]
-            price = round(Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency), 4)
-
-    # If the price is not given
-    if not price:
-        price = abs(amount)
+    # Transfers
+    # =========
+    # Note: First account in the list of transfers is to be deducted from
+    for i, t in enumerate(rule[cs_transfers]):
+        transfers.append(_process_transfer(trans.properties, t, i))
 
     # Add tags
     if cs_tag in rule.keys():
@@ -98,36 +116,14 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
         labels = []
 
     # Add properties
-    if cs_prop in rule.keys():
-        properties.update(rule[cs_prop])
+    if cs_props in rule.keys():
+        properties.update(rule[cs_props])
 
     # Add requested fields
     if cs_fields in rule.keys():
         fields = rule[cs_fields]
         for f in fields:
             properties.update({f.capitalize(): str(trans.properties[f]).capitalize()})
-
-    # FROM transfer
-    # =============
-    sign = -1 if trans.properties[cs_debtor_account] == trans.properties[cs_account] else 1
-    transfers.append(
-        Transfer(rule[cs_from], amount * sign, price)
-    )
-
-    # TO transfer
-    # ===========
-    if type(rule[cs_to]) != list:
-        rule[cs_to] = [rule[cs_to]]
-
-    for to in rule[cs_to]:
-        if commodity:
-            transfers.append(
-                Transfer(to, commodity, price)
-            )
-        else:
-            transfers.append(
-                Transfer(to, None, None)
-            )
 
     trans.trans_date = actual_date
     trans.labels = labels

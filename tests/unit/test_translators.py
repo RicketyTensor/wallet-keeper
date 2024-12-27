@@ -26,37 +26,115 @@ class TestParser(unittest.TestCase):
         rules = {
             "Dental Insurance": {
                 cs_rule: {cs_creditor_name: ".*Krakenversicherung.*"},
-                cs_from: "Assets:Checking",
-                cs_to: "Expenses:Insurance:Dental",
-                cs_prop: {
+                cs_transfers: [
+                    {
+                        cs_account: "Assets:Checking"
+                    },
+                    {
+                        cs_account: "Expenses:Insurance:Dental",
+                        cs_props: {
+                            cs_prop_provider: "Insurance ABC",
+                            cs_prop_class: "Safety",
+                            cs_prop_recurrence: "Monthly",
+                        },
+                        cs_labels: [
+                            "Insurance"
+                        ]
+                    }
+                ],
+                cs_props: {
                     cs_prop_group: "special",
-                    cs_prop_class: "optional"
                 }
             },
             "Life Insurance": {
-                cs_rule: {cs_creditor_name: ".*Life Insurance.*"},
-                cs_from: "Assets:Checking",
-                cs_to: "Expenses:Insurance:Life",
-                cs_prop: {
-                    cs_prop_group: "special",
-                    cs_prop_class: "optional"
-                }
+                cs_rule: {
+                    cs_creditor_name: ".*Life Insurance.*"
+                },
+                cs_props: {
+                    cs_prop_group: "Special"
+                },
+                cs_transfers: [
+                    {
+                        cs_account: "Assets:Checking"
+                    },
+                    {
+                        cs_account: "Expenses:Insurance:Life",
+                        cs_props: {
+                            cs_prop_id: "LV-1-2-3",
+                            cs_prop_class: "Safety",
+                            cs_prop_item: "Life Insurance",
+                            cs_prop_provider: "Insurance ABC",
+                            cs_prop_recurrence: "Monthly"
+                        },
+                        cs_labels: [
+                            "Insurance"
+                        ]
+                    }
+                ]
             },
             "Rent": {
-                cs_rule: {cs_message: ".*Miete.*"},
-                cs_from: "Assets:Checking",
-                cs_to: "Expenses:Rent",
+                cs_rule: {
+                    cs_message: ".*Miete.*"
+                },
+                cs_transfers: [
+                    {
+                        cs_account: "Assets:Checking"
+                    },
+                    {
+                        cs_account: "Expenses:Rent",
+                        cs_props: {
+                            cs_prop_location: "Dumpster Nr. 9",
+                            cs_prop_class: "Essential",
+                            cs_prop_item: "Rent",
+                            cs_prop_recurrence: "Monthly"
+                        }
+                    }
+                ],
+                cs_props: {
+                    cs_prop_group: "Common"
+                }
             },
             "Groceries": {
-                cs_rule: {cs_creditor_name: "Aldi"},
-                cs_from: "Assets:Checking",
-                cs_to: [
-                    "Expenses:Groceries",
-                    "Expenses:Alcohol"
+                cs_rule: {
+                    cs_creditor_name: ".*Aldi.*"
+                },
+                cs_transfers: [
+                    {
+                        cs_account: "Assets:Checking"
+                    },
+                    {
+                        cs_account: "Expenses:Groceries",
+                        cs_props: {
+                            cs_prop_class: "Essential",
+                            cs_prop_item: "Groceries"
+                        }
+                    },
+                    {
+                        cs_account: "Expenses:Food:Groceries",
+                        cs_props: {
+                            cs_prop_class: "Essential",
+                            cs_prop_item: "",
+                            cs_prop_reason: "Lunch"
+                        }
+                    },
+                    {
+                        cs_account: "Expenses:Luxuries:Alcohol",
+                        cs_props: {
+                            cs_prop_class: "Entertainment",
+                            cs_prop_item: ""
+                        }
+                    },
+                    {
+                        cs_account: "Expenses:Luxuries:Snacks",
+                        cs_props: {
+                            cs_prop_class: "Entertainment",
+                            cs_prop_item: ""
+                        }
+                    }
                 ],
-                cs_prop: {
-                    cs_prop_group: "common",
-                    cs_prop_shop: "Aldi"
+                cs_props: {
+                    cs_prop_shop: "EDEKA",
+                    cs_prop_group: "Common"
                 }
             },
             "Buying Commodities": {
@@ -64,22 +142,39 @@ class TestParser(unittest.TestCase):
                     cs_addinfo: "WERTPAPIERE",
                     cs_message: ".*isin depp123456.*"
                 },
-                cs_from: "Assets:Checking",
-                cs_to: "Equity:Securities:Fonds",
-                cs_prop: {
-                    cs_prop_fond: "Big Bollocks",
-                    cs_prop_isin: "DEPP123456",
-                    cs_prop_group: "special"
+                cs_transfers: [
+                    {
+                        cs_account: "Assets:Checking"
+                    },
+                    {
+                        cs_account: "Equity:Securities:Fonds",
+                        cs_props: {
+                            cs_prop_broker: "Dealer",
+                            cs_prop_class: "Finance",
+                            cs_prop_item: "Buy",
+                            cs_prop_fond: "Big Bollicks",
+                            cs_prop_isin: "DEPP123456",
+                            cs_prop_recurrence: "Monthly"
+                        },
+                        cs_commodity: {
+                            cs_pattern: "ck *([0-9],[0-9][0-9][0-9][0-9])",
+                            cs_name: "BALLS"
+                        },
+                        cs_price: {
+                            cs_pattern: "preis *([0-9][0-9][0-9],[0-9][0-9][0-9][0-9])",
+                            cs_name: "EUR"
+                        },
+                        cs_labels: [
+                            "Investment",
+                            "Finance",
+                            "Stocks"
+                        ]
+                    }
+                ],
+                cs_props: {
+                    cs_prop_group: "Special"
                 },
-                "commodity": {
-                    "pattern": "ck *([0-9],[0-9][0-9][0-9][0-9])",
-                    "name": "BALLS"
-                },
-                "price": {
-                    "pattern": "preis *([0-9][0-9][0-9],[0-9][0-9][0-9][0-9])",
-                    "name": "EUR"
-                }
-            }
+            },
         }
 
         p = Path(os.path.dirname(__file__))
@@ -91,18 +186,17 @@ class TestParser(unittest.TestCase):
         if len(list(test_files)) < 1:
             raise ValueError("No test filed were found!")
 
-        for file in test_files:
-            wallet = reader.read(file)
-            wallet = process_wallet(wallet, rules)
-            results = writer.write(wallet, out_dir, prefix)
+        wallet = reader.read(test_files)
+        wallet = process_wallet(wallet, rules)
+        results = writer.write(wallet, out_dir, prefix)
 
-            for test_file in results:
-                ref_file = p / "reference" / "translators" / os.path.basename(test_file)
-                if self.update:
-                    shutil.copyfile(test_file, ref_file)
+        for test_file in results:
+            ref_file = p / "reference" / "translators" / os.path.basename(test_file)
+            if self.update:
+                shutil.copyfile(test_file, ref_file)
 
-                if not filecmp.cmp(test_file, ref_file):
-                    raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
+            if not filecmp.cmp(test_file, ref_file):
+                raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
 
     def test_ledger_to_ledger(self):
         prefix = "ledger_to_ledger-"
@@ -118,17 +212,17 @@ class TestParser(unittest.TestCase):
         if len(list(test_files)) < 1:
             raise ValueError("No test filed were found!")
 
-        for file in test_files:
-            wallet = reader.read(file)
-            results = writer.write(wallet, out_dir, prefix)
+        wallet = reader.read(test_files)
+        results = writer.write(wallet, out_dir, prefix)
 
-            for test_file in results:
-                ref_file = p / "reference" / "translators" / os.path.basename(test_file)
-                if self.update:
-                    shutil.copyfile(test_file, ref_file)
+        for test_file in results:
+            ref_file = p / "reference" / "translators" / os.path.basename(test_file)
+            if self.update:
+                shutil.copyfile(test_file, ref_file)
 
-                if not filecmp.cmp(test_file, ref_file):
-                    raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
+            if not filecmp.cmp(test_file, ref_file):
+                raise AssertionError("Test file {} doesn't match the reference {}!!".format(test_file, ref_file))
+
 
 if __name__ == '__main__':
     unittest.main()

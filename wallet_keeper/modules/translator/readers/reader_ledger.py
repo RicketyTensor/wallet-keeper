@@ -319,15 +319,20 @@ class ReaderLedger(ParserBase):
         return transactions, account_labels, budget_monthly, budget_yearly
 
     @staticmethod
-    def read(path: Path, raw=True, **kwargs) -> Wallet:
+    def read(paths: List[Path], raw=True, **kwargs) -> Wallet:
         """
         Translate input to an output
 
-        :param path: list of files to translate
+        :param paths: list of files to translate
         :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: wallet instance
         """
-        transactions, account_labels, budget_monthly, budget_yearly = ReaderLedger._read(path, raw, **kwargs)
+        transactions = []
+        account_labels = {}
+        for path in paths:
+            t, ac, bm, by = ReaderLedger._read(path, raw, **kwargs)
+            transactions.extend(t)
+            account_labels.update(ac)
 
-        return Wallet(transactions, account_labels, budget_monthly, budget_yearly)
+        return Wallet(transactions, account_labels, None, None)

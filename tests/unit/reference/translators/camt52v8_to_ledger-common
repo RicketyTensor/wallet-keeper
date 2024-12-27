@@ -1,7 +1,27 @@
+2021-10-01 Rent
+    ; Group: Common
+    Assets:Checking                            -333.33 EUR 
+    Expenses:Rent                                       
+    ; Class: Essential
+    ; Item: Rent
+    ; Location: Dumpster Nr. 9
+    ; Recurrence: Monthly
+
 2023-12-24=2023-12-21 Groceries
-    ; Group: common
-    ; Shop: Aldi
+    ; Group: Common
+    ; Shop: EDEKA
     Assets:Checking                             -24.24 EUR 
     Expenses:Groceries                                  
-    Expenses:Alcohol                                    
+    ; Class: Essential
+    ; Item: Groceries
+    Expenses:Food:Groceries                             
+    ; Class: Essential
+    ; Item: 
+    ; reason: Lunch
+    Expenses:Luxuries:Alcohol                           
+    ; Class: Entertainment
+    ; Item: 
+    Expenses:Luxuries:Snacks                            
+    ; Class: Entertainment
+    ; Item: 
 

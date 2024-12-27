@@ -101,15 +101,17 @@ class ReaderCAMT52v8(ParserBase):
         return transactions
 
     @staticmethod
-    def read(path: Path, raw=True, **kwargs) -> Wallet:
+    def read(paths: List[Path], raw=True, **kwargs) -> Wallet:
         """
         Translate input to an output
 
-        :param path: list of files to translate
+        :param paths: list of files to translate
         :param raw: read data as is
         :param kwargs: reader specific arguments
         :return: wallet instance
         """
-        transactions = ReaderCAMT52v8._read(path, raw, **kwargs)
+        transactions = []
+        for path in paths:
+            transactions.extend(ReaderCAMT52v8._read(path, raw, **kwargs))
 
         return Wallet(transactions)
