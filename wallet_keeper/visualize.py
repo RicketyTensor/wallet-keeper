@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 import os
 
-load_figure_template("flatly")
+#load_figure_template("flatly")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

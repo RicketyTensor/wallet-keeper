@@ -69,7 +69,8 @@ class ReaderCAMT52v8(ParserBase):
             currency = get_attr(details, "ns:Amt", ns, "Ccy")
 
             # Message
-            messages = get_element(details, "ns:RmtInf", ns).findall("ns:Ustrd", ns)
+            msg_element = get_element(details, "ns:RmtInf", ns, empty=True)
+            messages = msg_element.findall("ns:Ustrd", ns) if msg_element else []
             msgs = []
             for msg in messages:
                 msgs.append(msg.text)

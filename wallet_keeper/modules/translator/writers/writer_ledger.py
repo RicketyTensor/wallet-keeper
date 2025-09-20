@@ -37,14 +37,14 @@ class WriterLedger(WriterBase):
 
         if not transfer.amount:
             lines.append(
-                "{:4}{:30}{:10} {} \n".format("", transfer.account, "", ""))
+                "{:4}{:40}{:10} {} \n".format("", transfer.account, "", ""))
         elif abs(transfer.amount) == transfer.price:
             lines.append(
-                "{:4}{:30}{:10.2f} {} \n".format("", transfer.account,
+                "{:4}{:40}{:10.2f} {} \n".format("", transfer.account,
                                                  transfer.amount.value, transfer.amount.currency))
         elif transfer.price:
             lines.append(
-                "{:4}{:30}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
+                "{:4}{:40}{:10.4f} {} @@ {:.4f} {}\n".format("", transfer.account,
                                                             transfer.amount.value, transfer.amount.currency,
                                                             transfer.price.value, transfer.price.currency))
         else:
@@ -115,7 +115,9 @@ class WriterLedger(WriterBase):
         """
         files = defaultdict(list)
         group_by = cs_prop_group
-        for trans in wallet.transactions:
+        dates = [t.book_date for t in wallet.transactions]
+        timed = [x for _, x in sorted(zip(dates, wallet.transactions),key=lambda x: x[0])]
+        for trans in timed:
             lines = WriterLedger._write_transaction(trans)
             group = trans.properties[group_by].lower() if group_by in trans.properties.keys() else "ungrouped"
             if group not in files.keys():

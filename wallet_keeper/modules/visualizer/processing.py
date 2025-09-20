@@ -15,7 +15,7 @@ def prepare(file: Path):
 
     # reader = factory_reader.create(ReaderMobusXML.format)
     reader = factory_reader.create(ReaderLedger.format)
-    wallet = reader.read(file, raw=False)
+    wallet = reader.read([file], raw=False)
 
 # Establish account hierarchy
 def get_hierarchy(words, delim=":"):
