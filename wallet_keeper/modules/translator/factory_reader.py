@@ -1,4 +1,5 @@
 from wallet_keeper.modules.translator.readers.reader_camt52v8 import ReaderCAMT52v8Builder, ReaderCAMT52v8
+from wallet_keeper.modules.translator.readers.reader_csv import ReaderCSVBuilder, ReaderCSV
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedgerBuilder, ReaderLedger
 
 
@@ -18,4 +19,5 @@ class ReaderFactory:
 
 factory = ReaderFactory()
 factory.register_builder(ReaderCAMT52v8.format, ReaderCAMT52v8Builder())
+factory.register_builder(ReaderCSV.format, ReaderCSVBuilder())
 factory.register_builder(ReaderLedger.format, ReaderLedgerBuilder())

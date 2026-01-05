@@ -1,0 +1,28 @@
+2025-08-01=2025-08-01 Raw
+    ; account: SKI03795780259457602
+    ; additional information: None
+    ; amount: -3000.0
+    ; creditor account: None
+    ; creditor name: BJ Sparkasse
+    ; currency: EUR
+    ; debtor account: None
+    ; debtor name: Bob Job
+    ; institution: 
+    ; message: 
+    ; status: Gebucht
+    ; value date: 01.08.25
+
+2025-08-28=2025-08-28 Raw
+    ; account: DKB123456789
+    ; additional information: None
+    ; amount: -15.0
+    ; creditor account: None
+    ; creditor name: Hilfiger.Stores.German/Bonn
+    ; currency: EUR
+    ; debtor account: None
+    ; debtor name: ISSUER
+    ; institution: 
+    ; message: VISA Debitkartenumsatz
+    ; status: Gebucht
+    ; value date: 28.08.25
+

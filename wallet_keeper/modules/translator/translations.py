@@ -1,4 +1,5 @@
 from wallet_keeper.modules.translator.readers.reader_camt52v8 import ReaderCAMT52v8
+from wallet_keeper.modules.translator.readers.reader_csv import ReaderCSV
 from wallet_keeper.modules.translator.readers.reader_ledger import ReaderLedger
 from wallet_keeper.modules.translator.writers.writer_ledger import WriterLedger
 
@@ -7,5 +8,6 @@ from wallet_keeper.modules.translator.writers.writer_ledger import WriterLedger
 # Value: Writer
 allowed_translations = {
     ReaderCAMT52v8.format: WriterLedger.format,
+    ReaderCSV.format: WriterLedger.format,
     ReaderLedger.format: WriterLedger.format,
 }

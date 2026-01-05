@@ -49,7 +49,7 @@ def _process_transfer(properties: Dict, rule: Dict, i: int) -> Transfer:
 
     # First transfer
     if i == 0:
-        amount = Dosh(properties[cs_amount] * -1, properties[cs_currency])
+        amount = Dosh(abs(properties[cs_amount]) * -1, properties[cs_currency])
         price = abs(amount)
     # Process commodities
     elif cs_commodity in rule.keys():

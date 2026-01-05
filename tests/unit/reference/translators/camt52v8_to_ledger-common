@@ -17,7 +17,7 @@
     Expenses:Food:Groceries                             
     ; Class: Essential
     ; Item: 
-    ; reason: Lunch
+    ; Reason: Lunch
     Expenses:Luxuries:Alcohol                           
     ; Class: Entertainment
     ; Item: 

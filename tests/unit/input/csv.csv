@@ -1,0 +1,8 @@
+"Girokonto";"DKB123456789"
+"Zeitraum:";"01.08.2025 - 31.08.2025"
+"Kontostand vom 16.09.2025:";"1.111,11 €"
+""
+"Buchungsdatum";"Wertstellung";"Status";"Zahlungspflichtige*r";"Zahlungsempfänger*in";"Verwendungszweck";"Umsatztyp";"IBAN";"Betrag (€)";"Gläubiger-ID";"Mandatsreferenz";"Kundenreferenz"
+"28.08.25";"28.08.25";"Gebucht";"ISSUER";"Hilfiger.Stores.German/Bonn";"VISA Debitkartenumsatz";"Ausgang";"DKB123456789";"-15";"";"";"245723564252"
+"27.08.25";"27.08.25";"Gebucht";"Employer GmbH                                         Dib-Lob-Str. 1";"Bob Job                                                       Meine Strasse 5";"Lohn/Gehalt 27382382/689589/Employer GmbH";"Eingang";"DE027605672016178";"2.000,11";"";"";"07-3945798738568387637"
+"01.08.25";"01.08.25";"Gebucht";"Bob Job";"BJ Sparkasse";"";"Ausgang";"SKI03795780259457602";"-3.000";"";"";""

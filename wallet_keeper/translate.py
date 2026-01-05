@@ -9,6 +9,8 @@ from wallet_keeper.modules.translator.processing import process_wallet
 import json
 import glob
 
+from wallet_keeper.utils.collection import cs_transactions
+
 
 def translate(files: List[Path], reader_format: str, writer_format: str, rules: dict, output: Path = None,
               tag: str = "") -> List[Path]:
@@ -25,8 +27,8 @@ def translate(files: List[Path], reader_format: str, writer_format: str, rules: 
     """
     # Read
     reader = fr.create(reader_format)
-    wallet = reader.read(files)
-    wallet = process_wallet(wallet, rules)
+    wallet = reader.read(files, rules)
+    wallet = process_wallet(wallet, rules[cs_transactions])
 
     # Write
     writer = fw.create(writer_format)
