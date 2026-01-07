@@ -55,6 +55,7 @@ class ReaderCAMT52v8(ParserBase):
             # Basic
             status = get_value(entry, "ns:Sts/ns:Cd", ns)
             valdate = datetime.strptime(get_value(entry, "ns:ValDt/ns:Dt", ns), "%Y-%m-%d")
+            bookdate = datetime.strptime(get_value(entry, "ns:BookgDt/ns:Dt", ns), "%Y-%m-%d")
             addinfo = get_value(entry, "ns:AddtlNtryInf", ns)
 
             # Parties
@@ -81,6 +82,7 @@ class ReaderCAMT52v8(ParserBase):
                 cs_institution: institution,
                 cs_status: status,
                 cs_valdate: valdate,
+                cs_bookdate: bookdate,
                 cs_addinfo: addinfo,
                 cs_creditor_name: creditor_name,
                 cs_creditor_account: creditor_acct,
@@ -93,7 +95,7 @@ class ReaderCAMT52v8(ParserBase):
 
             transactions.append(
                 Transaction(
-                    valdate, valdate, "Raw",
+                    valdate, bookdate, "Raw",
                     [], data, [],
                     [], raw=raw
                 )

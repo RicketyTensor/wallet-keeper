@@ -19,6 +19,7 @@
     ; Recurrence: Monthly
 
 2023-12-24=2023-07-08 Buying Commodities
+    ; Creditor name: Diebe inc.
     ; Group: Special
     Assets:Checking                            -555.55 EUR 
     Equity:Securities:Fonds                     1.0456 BALLS @@ 555.5500 EUR

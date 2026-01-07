@@ -1,0 +1,13 @@
+2025-08-27 Salary
+    ; Group: Income
+    ; Recurrence: Monthly
+    Income:Salary                             -2000.11 EUR 
+    ; :Income:Salary:
+    ; Class: Income
+    ; Item: Grundentgelt
+    Expenses:Insurance:Pension                          
+    ; :Government:Insurance:
+    ; Class: Safety
+    ; Item: Government Pension Insurance
+    Assets:Checking:Bank                                
+

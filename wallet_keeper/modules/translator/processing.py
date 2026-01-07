@@ -49,7 +49,7 @@ def _process_transfer(properties: Dict, rule: Dict, i: int) -> Transfer:
 
     # First transfer
     if i == 0:
-        amount = Dosh(properties[cs_amount] * -1, properties[cs_currency])
+        amount = Dosh(abs(properties[cs_amount]) * -1, properties[cs_currency])
         price = abs(amount)
     # Process commodities
     elif cs_commodity in rule.keys():
@@ -66,9 +66,11 @@ def _process_transfer(properties: Dict, rule: Dict, i: int) -> Transfer:
             pattern = rule[cs_price][cs_pattern]
             matches = re.findall(pattern, message.lower())
             if len(matches) < 1:
-                raise ValueError("Pattern \"{}\" was not detected in the text \"{}\"".format(pattern, message))
-            match = matches[0].strip().replace(",", ".")
-            price_value = match
+                print("WARNING: Pattern \"{}\" was not detected in the text \"{}\"".format(pattern, message))
+                return None
+            else:
+                match = matches[0].strip().replace(",", ".")
+                price_value = match
             price_currency = rule[cs_price][cs_name]
             price = round(Dosh(price_value, price_currency) * Dosh(commodity_amount, price_currency), 4)
 
@@ -107,7 +109,11 @@ def _process_transaction(trans: Transaction, name: str, rule: Dict) -> None:
     # =========
     # Note: First account in the list of transfers is to be deducted from
     for i, t in enumerate(rule[cs_transfers]):
-        transfers.append(_process_transfer(trans.properties, t, i))
+        processed_trans = _process_transfer(trans.properties, t, i)
+        if processed_trans is not None:
+            transfers.append(processed_trans)
+        else:
+            return
 
     # Add tags
     if cs_tag in rule.keys():

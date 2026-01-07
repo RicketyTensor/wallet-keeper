@@ -4,6 +4,7 @@ cs_currency = "currency"
 cs_amount = "amount"
 cs_status = "status"
 cs_valdate = "value date"
+cs_bookdate = "book date"
 cs_addinfo = "additional information"
 cs_creditor_name = "creditor name"
 cs_creditor_account = "creditor account"
@@ -28,8 +29,10 @@ cs_commodity = "commodity"
 cs_price = "price"
 cs_pattern = "pattern"
 cs_fields = "fields"
+cs_keep = "keep"
 
 # Transfers
+cs_transactions = "transactions"
 cs_transfers = "transfers"
 
 # Properties
@@ -46,7 +49,7 @@ cs_prop_id = "ID"
 cs_prop_depot = "Depot"
 cs_prop_broker = "Broker"
 cs_prop_association = "Association"
-cs_prop_reason = "reason"
+cs_prop_reason = "Reason"
 cs_prop_recurrence = "Recurrence"
 cs_prop_subscription = "Subscription"
 cs_prop_location = "Location"
@@ -58,3 +61,14 @@ cs_prop_stock = "Stock"
 
 #
 cs_labels = "labels"
+
+# csv
+cs_delimiter = "delimiter"
+cs_header = "header"
+cs_columns = "columns"
+cs_thousand = "thousand"
+cs_decimal = "decimal"
+cs_format = "format"
+cs_number = "number"
+cs_date = "date"
+

@@ -9,20 +9,21 @@ class Wallet(object):
     def __init__(self, transactions: List[Transaction], account: Dict[str, str] = None,
                  budget_monthly: Transaction = None, budget_yearly: Transaction = None):
         self.transactions = transactions
-        self.account_labels = account
+        self.account_labels = self._extract_accounts(transactions)
         self.budget_monthly = budget_monthly
         self.budget_yearly = budget_yearly
 
         pass
 
-    def _extract_accounts(self):
+    @staticmethod
+    def _extract_accounts(transactions: List[Transaction]) -> List[str]:
         """
         Get accounts present in the journal
 
         :return:
         """
         accounts = []
-        for t in self.transactions:
+        for t in transactions:
             accounts.extend([tt.account for tt in t.transfers])
 
         return sorted(list(set(accounts)))
@@ -33,7 +34,7 @@ class Wallet(object):
 
         :return:
         """
-        return list(self.account_labels.keys())
+        return self.account_labels
 
     def get_list_accounts_w_budget(self) -> List[str]:
         """
